@@ -1,4 +1,11 @@
 package com.skthon.sixthsensebe.global.exception.model;
 
-public class BaseErrorCode {
+import org.springframework.http.HttpStatus;
+
+public interface BaseErrorCode {
+  String getCode();
+
+  String getMessage();
+
+  HttpStatus getStatus();
 }

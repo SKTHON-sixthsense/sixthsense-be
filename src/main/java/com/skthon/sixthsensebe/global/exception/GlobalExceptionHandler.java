@@ -1,5 +1,6 @@
-package com.skthon.sixthsensebe.global.exception.model;
+package com.skthon.sixthsensebe.global.exception;
 
+import com.skthon.sixthsensebe.global.exception.model.BaseErrorCode;
 import com.skthon.sixthsensebe.global.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
