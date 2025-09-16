@@ -63,4 +63,12 @@ git push origin main
 2. 컨테이너 중지 실행 중인 컨테이너의 CONTAINER ID를 찾아서 중지. ```docker stop <CONTAINER ID>```
 3. 컨테이너의 삭제가 필요할 경우 ```docker rm <CONTAINER ID>```
 4. 이미지 삭제가 필요할 경우 ```docker rmi <IMAGE ID or IMAGE NAME>```
-   .
+
+## 🔧 Submodule convention
+1. submodule 수정 → 팀원들에게 알리기
+2. submodule 경로로 이동 후 ```main```으로 push (브랜치 생성 X)
+3. 루트 경로로 나와서 해당 브랜치로 push
+    - commit message : ```"submodule push"```로 통일
+4. ```git submodule update --remote```로 서브모듈 최신화
+5. 루트 경로에서 바뀐 내용 헤당 브랜치로 push
+    - - commit message : ```"submodule latest"```로 통일
