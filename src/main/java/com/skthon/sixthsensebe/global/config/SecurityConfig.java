@@ -1,4 +1,4 @@
-package com.skthon.sixthsensebe.global;
+package com.skthon.sixthsensebe.global.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
