@@ -1,19 +1,12 @@
 package com.skthon.sixthsensebe.domain.user.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
+import com.skthon.sixthsensebe.domain.jobapplication.entity.JobApplication;
 import com.skthon.sixthsensebe.global.common.BaseTimeEntity;
+import jakarta.persistence.*;
+import lombok.*;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -35,4 +28,8 @@ public class User extends BaseTimeEntity {
 
   @Column(name = "password", nullable = false, length = 100)
   private String password;
+
+  // 한 명의 사용자는 여러 채용공고에 지원할 수 있음
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<JobApplication> jobApplications = new ArrayList<>();
 }
