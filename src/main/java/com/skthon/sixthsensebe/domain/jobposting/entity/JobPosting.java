@@ -25,8 +25,8 @@ public class JobPosting extends BaseTimeEntity {
   @Column(name = "companyName")
   private String companyName; // 업체명
 
-  @Column(name = "s3Key")
-  private String s3Key; // s3에 업로드한 이미지의 s3key 값
+  @Column(name = "s3Url")
+  private String s3Url; // s3에 업로드한 이미지의 url
 
   @Enumerated(EnumType.STRING)
   @Column(name = "recruitmentStatus")

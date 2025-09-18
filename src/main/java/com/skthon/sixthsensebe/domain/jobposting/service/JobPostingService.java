@@ -55,7 +55,7 @@ public class JobPostingService {
           PathName.JOBPOSTING,
           file,
           jobPosting,
-          (s3Key) -> jobPosting.toBuilder().s3Key(s3Key).build()
+          (s3Url) -> jobPosting.toBuilder().s3Url(s3Url).build()
       );
 
       log.info("S3로 채용공고 이미지 업로드 완료");

@@ -32,11 +32,11 @@ public class S3Service {
   public <T> T uploadImage(PathName pathName, MultipartFile file, T entity,
                            Function<String, T> s3KeySetter) {
 
-    String s3Key = uploadFile(pathName, file);
-    return s3KeySetter.apply(s3Key);
+    String s3Url = uploadFile(pathName, file);
+    return s3KeySetter.apply(s3Url);
   }
 
-  // s3에 이미지를 업로드하고 s3Key 값을 반환함
+  // s3에 이미지를 업로드하고 s3Url을 반환
   public String uploadFile(PathName pathName, MultipartFile file) {
 
     validateFile(file);
@@ -50,8 +50,7 @@ public class S3Service {
     try {
       amazonS3.putObject(
           new PutObjectRequest(s3Config.getBucket(), keyName, file.getInputStream(), metadata));
-      // return amazonS3.getUrl(s3Config.getBucket(), keyName).toString(); // s3 객체 url 반환
-      return keyName; // s3key
+      return amazonS3.getUrl(s3Config.getBucket(), keyName).toString(); // s3 객체 url 반환
     } catch (Exception e) {
       log.error("S3 upload 중 오류 발생", e);
       throw new CustomException(S3ErrorCode.FILE_SERVER_ERROR);

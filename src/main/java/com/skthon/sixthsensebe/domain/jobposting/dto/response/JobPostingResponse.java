@@ -19,6 +19,9 @@ public class JobPostingResponse {
   @Schema(description = "업체 명")
   private String companyName;
 
+  @Schema(description = "S3 url")
+  private String s3Url; // DB 저장 s3Url
+
   @Schema(description = "모집 현황")
   private RecruitmentStatus status;
 
