@@ -1,11 +1,15 @@
 package com.skthon.sixthsensebe.domain.jobposting.entity;
 
+import com.skthon.sixthsensebe.domain.jobapplication.entity.JobApplication;
 import com.skthon.sixthsensebe.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -65,5 +69,9 @@ public class JobPosting extends BaseTimeEntity {
 
   @Column(name = "callNum")
   private String callNum; // 가게 전화번호
+
+  // 채용공고 하나는 여러번 지원 될 수 있음
+  @OneToMany(mappedBy = "jobPosting", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<JobApplication> jobApplications = new ArrayList<>();
 
 }

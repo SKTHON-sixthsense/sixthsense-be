@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Tag(name = "JobPosting", description = "채용공고 관련 API")
+@Tag(name = "JobPosting", description = "채용공고 등록 API")
 public class JobPostingController {
 
   private final JobPostingService jobPostingService;
