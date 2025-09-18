@@ -30,6 +30,7 @@ public class JobPostingMapper {
         .employmentType(jobPosting.getEmploymentType())
         .benefits(jobPosting.getBenefits())
         .educationRequirement(jobPosting.getEducationRequirement())
+        .preferredQualifications(jobPosting.getPreferredQualifications())
         .homepageUrl(jobPosting.getHomepageUrl())
         .callNum(jobPosting.getCallNum())
         .build();

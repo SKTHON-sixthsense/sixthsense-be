@@ -29,12 +29,18 @@ public class JobPostingService {
   @Transactional
   public JobPostingResponse createJobPosting(CreateJobPostingRequest request, MultipartFile file) {
 
+    log.info("=== 요청 데이터 확인 ===");
+    log.info("postName: {}", request.getPostName());
+    log.info("preferredQualifications: {}", request.getPreferredQualifications());
+    log.info("benefits: {}", request.getBenefits());
+    log.info("workHours: {}", request.getWorkHours());
+
     try {
       // request 기반 엔티티 생성
       JobPosting jobPosting = JobPosting.builder()
           .postName(request.getPostName())
           .companyName(request.getCompanyName())
-          .status(RecruitmentStatus.RECRUITING)
+          .status(RecruitmentStatus.RECRUITING) // 채용공고 등록 시 모집중 상태 고정
           .workLocation(request.getWorkLocation())
           .salary(request.getSalary())
           .workDays(request.getWorkDays())
