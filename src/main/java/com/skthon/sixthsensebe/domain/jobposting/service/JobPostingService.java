@@ -59,7 +59,7 @@ public class JobPostingService {
 
       log.info("S3로 채용공고 이미지 업로드 완료");
 
-      JobPosting savedJobPosting = jobPostingRepository.save(jobPosting); // 엔티티 DB 저장
+      JobPosting savedJobPosting = jobPostingRepository.save(jobPostingWithImage); // 엔티티 DB 저장
 
       log.info("채용공고 DB에 저장완료. 채용공고 등록 완료.");
 
