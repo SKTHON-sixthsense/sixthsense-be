@@ -1,6 +1,9 @@
 ## #️⃣ Issue Number
 
-<!--- ex) #이슈번호, #이슈번호 -->
+<!-- 관련있는 이슈 번호(#000)을 적어주세요.
+  해당 pull request merge와 함께 이슈를 닫으려면 closed #Issue_number를 적어주세요 -->
+
+- closed #
 
 ## 📝 요약(Summary)
 
