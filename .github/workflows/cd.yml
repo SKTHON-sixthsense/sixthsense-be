@@ -2,7 +2,7 @@ name: CD
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, infra/deploy ]
 
 jobs:
   # 1단계: 빌드
