@@ -3,6 +3,7 @@ package com.skthon.sixthsensebe.domain.jobposting.service;
 import com.skthon.sixthsensebe.domain.jobposting.dto.request.CreateJobPostingRequest;
 import com.skthon.sixthsensebe.domain.jobposting.dto.response.JobPostingResponse;
 import com.skthon.sixthsensebe.domain.jobposting.entity.JobPosting;
+import com.skthon.sixthsensebe.domain.jobposting.entity.RecruitmentStatus;
 import com.skthon.sixthsensebe.domain.jobposting.exception.JobPostingErrorCode;
 import com.skthon.sixthsensebe.domain.jobposting.mapper.JobPostingMapper;
 import com.skthon.sixthsensebe.domain.jobposting.repository.JobPostingRepository;
@@ -33,7 +34,7 @@ public class JobPostingService {
       JobPosting jobPosting = JobPosting.builder()
           .postName(request.getPostName())
           .companyName(request.getCompanyName())
-          .status(request.getStatus())
+          .status(RecruitmentStatus.RECRUITING)
           .workLocation(request.getWorkLocation())
           .salary(request.getSalary())
           .workDays(request.getWorkDays())
@@ -51,7 +52,7 @@ public class JobPostingService {
 
       // 이미지 업로드 및 s3Key 필드 업데이트
       JobPosting jobPostingWithImage = s3Service.uploadImage(
-          PathName.JObPOSTING,  // 오타 수정: JObPOSTING -> JOB_POSTING
+          PathName.JOBPOSTING,
           file,
           jobPosting,
           (s3Key) -> jobPosting.toBuilder().s3Key(s3Key).build()

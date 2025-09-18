@@ -101,7 +101,7 @@ public class S3Service {
   public String createKeyName(PathName pathName) {
 
     return switch (pathName) {
-      case JObPOSTING -> s3Config.getJobposting();
+      case JOBPOSTING -> s3Config.getJobposting();
       case PROFILE -> s3Config.getProfile();
     }
         + '/'
@@ -132,7 +132,7 @@ public class S3Service {
 
   public List<String> getAllFiles(PathName pathName) {
     String prefix = switch (pathName) {
-      case JObPOSTING -> s3Config.getJobposting();
+      case JOBPOSTING -> s3Config.getJobposting();
       case PROFILE -> s3Config.getProfile();
     };
 
@@ -152,7 +152,7 @@ public class S3Service {
 
   public void deleteFile(PathName pathName, String fileName) {
     String prefix = switch (pathName) {
-      case JObPOSTING -> s3Config.getJobposting();
+      case JOBPOSTING -> s3Config.getJobposting();
       case PROFILE -> s3Config.getProfile();
     };
     String keyName = prefix + "/" + fileName;
