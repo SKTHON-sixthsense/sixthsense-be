@@ -11,5 +11,4 @@ public class SixthsenseBeApplication {
   public static void main(String[] args) {
     SpringApplication.run(SixthsenseBeApplication.class, args);
   }
-
 }
