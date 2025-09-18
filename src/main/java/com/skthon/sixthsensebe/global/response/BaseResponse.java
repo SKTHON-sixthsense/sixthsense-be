@@ -35,4 +35,3 @@ public class BaseResponse<T> { // 응답 클래스
     return new BaseResponse<>(false, code, message, null);
   }
 }
-
