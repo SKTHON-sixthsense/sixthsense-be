@@ -1,20 +1,23 @@
 package com.skthon.sixthsensebe.domain.auth.controller;
 
-import com.skthon.sixthsensebe.domain.auth.service.AuthService;
-import com.skthon.sixthsensebe.domain.user.dto.request.UserRequest;
-import com.skthon.sixthsensebe.domain.user.dto.response.UserResponse;
-import com.skthon.sixthsensebe.global.response.BaseResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.skthon.sixthsensebe.domain.auth.service.AuthService;
+import com.skthon.sixthsensebe.domain.user.dto.request.UserRequest;
+import com.skthon.sixthsensebe.domain.user.dto.response.UserResponse;
+import com.skthon.sixthsensebe.global.response.BaseResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,9 +29,10 @@ public class AuthController {
 
   @Operation(
       summary = "로그인",
-      description = """
+      description =
+          """
           아이디와 비밀번호로 로그인을 수행합니다.
-          
+
           - 성공 시: 액세스 토큰은 헤더(**Authorization**)로, 리프레시 토큰은 **HttpOnly 쿠키**로 전달됩니다.
           - 응답 바디에는 로그인한 사용자의 기본 정보가 포함됩니다.
           """)
@@ -77,7 +81,7 @@ public class AuthController {
       description =
           """
               현재 로그인된 사용자를 로그아웃 처리합니다.
-              
+
               - 요청 헤더의 **Authorization**에서 액세스 토큰을 추출하여 로그아웃 처리합니다.
               - 액세스 토큰은 Redis 블랙리스트에 등록되어 만료 전까지 사용이 차단됩니다.
               - 리프레시 토큰은 Redis에서 삭제되며, **브라우저 쿠키에서도 제거**됩니다.

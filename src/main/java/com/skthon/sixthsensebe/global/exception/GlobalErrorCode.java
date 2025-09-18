@@ -1,9 +1,11 @@
 package com.skthon.sixthsensebe.global.exception;
 
+import org.springframework.http.HttpStatus;
+
 import com.skthon.sixthsensebe.global.exception.model.BaseErrorCode;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor

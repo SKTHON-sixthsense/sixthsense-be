@@ -1,9 +1,10 @@
 package com.skthon.sixthsensebe.domain.user.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.skthon.sixthsensebe.domain.user.dto.request.UserRequest;
 import com.skthon.sixthsensebe.domain.user.dto.response.UserResponse;
 import com.skthon.sixthsensebe.domain.user.entity.User;
-import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {

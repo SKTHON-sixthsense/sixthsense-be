@@ -55,4 +55,3 @@ public class SecurityConfig implements WebMvcConfigurer {
     return new InMemoryUserDetailsManager(admin);
   }
 }
-

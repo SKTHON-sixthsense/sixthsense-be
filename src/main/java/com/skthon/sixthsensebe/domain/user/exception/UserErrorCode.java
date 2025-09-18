@@ -1,9 +1,11 @@
 package com.skthon.sixthsensebe.domain.user.exception;
 
+import org.springframework.http.HttpStatus;
+
 import com.skthon.sixthsensebe.global.exception.model.BaseErrorCode;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -23,6 +25,3 @@ public enum UserErrorCode implements BaseErrorCode {
   private final String message;
   private final HttpStatus status;
 }
-
-
-

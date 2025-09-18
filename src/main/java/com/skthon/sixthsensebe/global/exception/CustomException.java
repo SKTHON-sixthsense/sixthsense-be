@@ -1,5 +1,7 @@
 package com.skthon.sixthsensebe.global.exception;
+
 import com.skthon.sixthsensebe.global.exception.model.BaseErrorCode;
+
 import lombok.Getter;
 
 @Getter

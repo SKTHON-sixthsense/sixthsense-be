@@ -1,5 +1,9 @@
 package com.skthon.sixthsensebe.domain.user.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.skthon.sixthsensebe.domain.user.dto.request.UserRequest;
 import com.skthon.sixthsensebe.domain.user.dto.response.UserResponse;
 import com.skthon.sixthsensebe.domain.user.entity.User;
@@ -7,18 +11,16 @@ import com.skthon.sixthsensebe.domain.user.exception.UserErrorCode;
 import com.skthon.sixthsensebe.domain.user.mapper.UserMapper;
 import com.skthon.sixthsensebe.domain.user.repository.UserRepository;
 import com.skthon.sixthsensebe.global.exception.CustomException;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
 
   private final UserRepository userRepository;
-  private final UserMapper userMapper;            // toEntity(), toResponse() 제공
-  private final PasswordEncoder passwordEncoder;  // BCryptPasswordEncoder 등
+  private final UserMapper userMapper; // toEntity(), toResponse() 제공
+  private final PasswordEncoder passwordEncoder; // BCryptPasswordEncoder 등
 
   /* 회원가입 */
   @Transactional
@@ -42,8 +44,10 @@ public class UserService {
     final String username = request.getUsername();
     final String rawPassword = request.getPassword();
 
-    User user = userRepository.findByUsername(username)
-        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+    User user =
+        userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
 
     if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
       throw new CustomException(UserErrorCode.INVALID_PASSWORD);

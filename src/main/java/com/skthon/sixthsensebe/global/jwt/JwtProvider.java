@@ -1,7 +1,18 @@
 package com.skthon.sixthsensebe.global.jwt;
 
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
+import java.util.UUID;
+
+import jakarta.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import com.skthon.sixthsensebe.domain.auth.exception.AuthErrorCode;
 import com.skthon.sixthsensebe.global.exception.CustomException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -9,15 +20,8 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
@@ -25,10 +29,8 @@ public class JwtProvider {
 
   private Key key;
   private final String secretKey;
-  @Getter
-  private final long accessTokenExpireTime;
-  @Getter
-  private final long refreshTokenExpireTime;
+  @Getter private final long accessTokenExpireTime;
+  @Getter private final long refreshTokenExpireTime;
 
   public JwtProvider(
       @Value("${spring.jwt.secret}") String secretKey,
@@ -97,4 +99,3 @@ public class JwtProvider {
     return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
   }
 }
-
