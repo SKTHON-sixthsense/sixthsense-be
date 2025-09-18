@@ -1,4 +1,4 @@
-package com.skthon.sixthsensebe.domain.jobposting.mapper;
+package com.skthon.sixthsensebe.domain.jobposting.exception;
 
 import com.skthon.sixthsensebe.global.exception.model.BaseErrorCode;
 import lombok.AllArgsConstructor;

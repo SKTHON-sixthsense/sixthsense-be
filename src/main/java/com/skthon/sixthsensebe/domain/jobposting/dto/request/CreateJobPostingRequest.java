@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @Schema(title = "JobPostingRequest DTO", description = "채용공고를 등록하기 위한 데이터 전송")
-public class JobPostingRequest {
+public class CreateJobPostingRequest {
 
   @Schema(description = "공고 제목")
   private String postName;
@@ -19,7 +19,7 @@ public class JobPostingRequest {
   private String status;
 
   @Schema(description = "근무지")
-  private Integer workLocation;
+  private String workLocation;
 
   @Schema(description = "급여")
   private String salary;
@@ -37,7 +37,7 @@ public class JobPostingRequest {
   private String employmentType;
 
   @Schema(description = "복리 후생")
-  private Integer benefits;
+  private String benefits;
 
   @Schema(description = "학력 조건")
   private String educationRequirement;
@@ -48,5 +48,7 @@ public class JobPostingRequest {
   @Schema(description = "가게 홈페이지 url")
   private String homepageUrl;
 
+  @Schema(description = "가게 전화번호")
+  private String callNum;
 
 }

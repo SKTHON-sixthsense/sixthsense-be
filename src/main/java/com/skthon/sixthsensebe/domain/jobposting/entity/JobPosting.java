@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "comments")
@@ -25,14 +25,17 @@ public class JobPosting extends BaseTimeEntity {
   @Column(name = "companyName")
   private String companyName; // 업체명
 
-  @Column(name = "status")
+  @Column(name = "s3Key")
+  private String s3Key; // s3에 업로드한 이미지의 s3key 값
+
+  @Column(name = "status") // (타입수정 필요)
   private String status; // 모집 현황
 
   @Column(name = "workLocation")
   private String workLocation; // 근무지
 
   @Column(name = "salary")
-  private String salary; // 급
+  private String salary; // 급여
 
   @Column(name = "workDays")
   private String workDays; // 근무 요일
@@ -43,7 +46,7 @@ public class JobPosting extends BaseTimeEntity {
   @Column(name = "jobCategory")
   private String jobCategory; // 모집 직종
 
-  @Column(name = "employmentType")
+  @Column(name = "employmentType") // (타입수정 필요)
   private String employmentType; // 고용 형태 (알바 / 정직원)
 
   @Column(name = "benefits")
@@ -60,6 +63,5 @@ public class JobPosting extends BaseTimeEntity {
 
   @Column(name = "callNum")
   private String callNum; // 가게 전화번호
-
 
 }
