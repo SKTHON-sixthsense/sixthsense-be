@@ -36,6 +36,13 @@ services:
     networks:
       - sixthsense-network  # Spring과 같은 네트워크 상에 있어서 mysql이라는 호스트 이름으로 접근 가능
 
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379" # 호스트와 컨테이너의 Redis 포트를 매핑
+    networks:
+      - sixthsense-network
+
 networks:
   sixthsense-network:
     driver: bridge  # Docker 기본 브리지 네트워크를 사용
