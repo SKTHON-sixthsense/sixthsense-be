@@ -1,5 +1,6 @@
 package com.skthon.sixthsensebe.domain.user.dto.response;
 
+import com.skthon.sixthsensebe.domain.user.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,4 +18,7 @@ public class UserResponse {
 
   @Schema(description = "이름", example = "박명수")
   private String name;
+
+  @Schema(example = "WORKER", allowableValues = {"OWNER", "WORKER"})
+  private Role role;
 }

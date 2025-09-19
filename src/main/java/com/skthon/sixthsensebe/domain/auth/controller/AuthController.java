@@ -1,23 +1,20 @@
 package com.skthon.sixthsensebe.domain.auth.controller;
 
+import com.skthon.sixthsensebe.domain.auth.service.AuthService;
+import com.skthon.sixthsensebe.domain.user.dto.request.UserRequest;
+import com.skthon.sixthsensebe.domain.user.dto.response.UserResponse;
+import com.skthon.sixthsensebe.global.response.BaseResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.skthon.sixthsensebe.domain.auth.service.AuthService;
-import com.skthon.sixthsensebe.domain.user.dto.request.UserRequest;
-import com.skthon.sixthsensebe.domain.user.dto.response.UserResponse;
-import com.skthon.sixthsensebe.global.response.BaseResponse;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,11 +28,11 @@ public class AuthController {
       summary = "로그인",
       description =
           """
-          아이디와 비밀번호로 로그인을 수행합니다.
-
-          - 성공 시: 액세스 토큰은 헤더(**Authorization**)로, 리프레시 토큰은 **HttpOnly 쿠키**로 전달됩니다.
-          - 응답 바디에는 로그인한 사용자의 기본 정보가 포함됩니다.
-          """)
+              아이디와 비밀번호로 로그인을 수행합니다.
+              
+              - 성공 시: 액세스 토큰은 헤더(**Authorization**)로, 리프레시 토큰은 **HttpOnly 쿠키**로 전달됩니다.
+              - 응답 바디에는 로그인한 사용자의 기본 정보가 포함됩니다.
+              """)
   @PostMapping("/login")
   public ResponseEntity<BaseResponse<UserResponse>> login(
       @Valid @RequestBody UserRequest.LoginRequest loginRequest, HttpServletResponse response) {
@@ -44,18 +41,27 @@ public class AuthController {
   }
 
   @Operation(
-      summary = "테스트 계정 로그인",
-      description =
-          """
-              테스트용 계정으로 로그인을 수행합니다.
-              - 무조건 ID가 1인 계정으로 로그인됩니다.
-              - **테스트 계정으로 로그인** 시 사용 가능합니다.
-              - 토큰 발급 및 응답 구조는 일반 로그인과 동일합니다.
-              """)
-  @PostMapping("/login/test")
-  public ResponseEntity<BaseResponse<UserResponse>> testLogin(HttpServletResponse response) {
-    UserResponse userResponse = authService.testLogin(response);
-    return ResponseEntity.ok(BaseResponse.success("테스트 로그인 성공", userResponse));
+      summary = "Worker 테스트 로그인",
+      description = """
+            테스트용 구직자(Worker) 계정으로 즉시 로그인합니다.
+            - 토큰 발급 및 응답은 일반 로그인과 동일합니다.
+          """)
+  @PostMapping("/login/test/worker")
+  public ResponseEntity<BaseResponse<UserResponse>> testLoginWorker(HttpServletResponse response) {
+    UserResponse userResponse = authService.testLoginWorker(response);
+    return ResponseEntity.ok(BaseResponse.success("테스트 로그인(Worker) 성공", userResponse));
+  }
+
+  @Operation(
+      summary = "Owner 테스트 로그인",
+      description = """
+            테스트용 사장님(Owner) 계정으로 즉시 로그인합니다.
+            - 토큰 발급 및 응답은 일반 로그인과 동일합니다.
+          """)
+  @PostMapping("/login/test/owner")
+  public ResponseEntity<BaseResponse<UserResponse>> testLoginOwner(HttpServletResponse response) {
+    UserResponse userResponse = authService.testLoginOwner(response);
+    return ResponseEntity.ok(BaseResponse.success("테스트 로그인(Owner) 성공", userResponse));
   }
 
   @Operation(
@@ -81,7 +87,7 @@ public class AuthController {
       description =
           """
               현재 로그인된 사용자를 로그아웃 처리합니다.
-
+              
               - 요청 헤더의 **Authorization**에서 액세스 토큰을 추출하여 로그아웃 처리합니다.
               - 액세스 토큰은 Redis 블랙리스트에 등록되어 만료 전까지 사용이 차단됩니다.
               - 리프레시 토큰은 Redis에서 삭제되며, **브라우저 쿠키에서도 제거**됩니다.

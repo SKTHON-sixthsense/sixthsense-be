@@ -1,18 +1,5 @@
 package com.skthon.sixthsensebe.domain.auth.service;
 
-import java.time.Duration;
-
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.skthon.sixthsensebe.domain.auth.exception.AuthErrorCode;
 import com.skthon.sixthsensebe.domain.user.dto.request.UserRequest;
 import com.skthon.sixthsensebe.domain.user.dto.response.UserResponse;
@@ -24,8 +11,17 @@ import com.skthon.sixthsensebe.domain.user.service.UserService;
 import com.skthon.sixthsensebe.global.exception.CustomException;
 import com.skthon.sixthsensebe.global.jwt.JwtProvider;
 import com.skthon.sixthsensebe.global.util.RedisUtil;
-
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +43,7 @@ public class AuthService {
    * 일반 로그인을 처리하는 메서드
    *
    * @param loginRequest 사용자 로그인 요청 객체 (이메일, 비밀번호 포함)
-   * @param response 액세스 토큰과 리프레시 토큰을 담기 위한 HTTP 응답 객체
+   * @param response     액세스 토큰과 리프레시 토큰을 담기 위한 HTTP 응답 객체
    * @return 로그인한 사용자 정보가 담긴 {@link UserResponse} 객체
    * @throws CustomException 이메일에 해당하는 사용자가 없을 경우 {@link AuthErrorCode#INVALID_PASSWORD}
    * @throws CustomException 비밀번호가 일치하지 않을 경우 {@link AuthErrorCode#INVALID_PASSWORD}
@@ -57,28 +53,27 @@ public class AuthService {
     return issueTokensAndSetResponse(user, response);
   }
 
-  /**
-   * 테스트용 로그인 계정(ID = 1)을 통해 로그인을 처리하는 메서드
-   *
-   * @param response 액세스 토큰과 리프레시 토큰을 담기 위한 HTTP 응답 객체
-   * @return 로그인한 테스트 사용자 정보가 담긴 {@link UserResponse} 객체
-   * @throws CustomException ID가 1인 테스트 사용자가 존재하지 않을 경우 {@link
-   *     AuthErrorCode#AUTHENTICATION_NOT_FOUND}
-   */
-  public UserResponse testLogin(HttpServletResponse response) {
-    User user =
-        userRepository
-            .findById(1L)
-            .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+  // WORKER 테스트용 로그인 계정(ID = 1)을 통해 로그인을 처리
+  public UserResponse testLoginWorker(HttpServletResponse response) {
+    User user = userRepository.findById(1L)
+        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
     return issueTokensAndSetResponse(user, response);
   }
+
+  // OWNER 테스트용 로그인 계정(ID = 2)을 통해 로그인을 처리
+  public UserResponse testLoginOwner(HttpServletResponse response) {
+    User user = userRepository.findById(2L)
+        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+    return issueTokensAndSetResponse(user, response);
+  }
+
 
   /**
    * 로그아웃 처리 메서드
    *
    * <p>요청 헤더에서 액세스 토큰을 추출하여 Redis 블랙리스트에 저장하고, 리프레시 토큰을 Redis에서 삭제하여 재사용을 차단합니다.
    *
-   * @param request HTTP 요청 객체 (헤더에서 Access Token 추출용)
+   * @param request  HTTP 요청 객체 (헤더에서 Access Token 추출용)
    * @param response HTTP 응답 객체 (리프레시 쿠키 삭제용)
    * @throws CustomException 액세스 토큰이 유효하지 않거나 없을 경우 {@link AuthErrorCode#INVALID_ACCESS_TOKEN}
    */
@@ -104,12 +99,13 @@ public class AuthService {
   /**
    * 액세스 토큰 재발급 처리 메서드
    *
-   * <p>쿠키에서 리프레시 토큰을 추출한 후 Redis에 저장된 토큰과 비교하여 유효성을 검증합니다. 검증에 성공하면 새로운 액세스 토큰을 생성하여 응답 헤더에 포함시킵니다.
+   * <p>쿠키에서 리프레시 토큰을 추출한 후 Redis에 저장된 토큰과 비교하여 유효성을 검증합니다. 검증에 성공하면 새로운 액세스 토큰을 생성하여 응답 헤더에
+   * 포함시킵니다.
    *
-   * @param request HTTP 요청 객체 (쿠키에서 리프레시 토큰 추출용)
+   * @param request  HTTP 요청 객체 (쿠키에서 리프레시 토큰 추출용)
    * @param response HTTP 응답 객체 (새로운 액세스 토큰 설정용)
-   * @throws CustomException 리프레시 토큰이 없거나 유효하지 않거나, 저장된 토큰과 일치하지 않는 경우 {@link
-   *     AuthErrorCode#REFRESH_TOKEN_REQUIRED}
+   * @throws CustomException 리프레시 토큰이 없거나 유효하지 않거나, 저장된 토큰과 일치하지 않는 경우
+   *                         {@link AuthErrorCode#REFRESH_TOKEN_REQUIRED}
    */
   public void reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
     // 1. 쿠키에서 refreshToken 추출
