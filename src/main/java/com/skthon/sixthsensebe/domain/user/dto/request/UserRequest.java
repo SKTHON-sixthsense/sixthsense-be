@@ -1,8 +1,9 @@
 package com.skthon.sixthsensebe.domain.user.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-
+import com.skthon.sixthsensebe.domain.user.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +24,10 @@ public class UserRequest {
     @Schema(description = "이름", example = "박명수")
     @NotBlank
     private String name;
+
+    @NotNull(message = "role은 필수 값입니다.")
+    @Schema(allowableValues = {"OWNER", "WORKER"}, example = "WORKER")
+    private Role role;
   }
 
   @Getter
