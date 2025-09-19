@@ -1,5 +1,6 @@
 package com.skthon.sixthsensebe.global.naverocr.entity;
 
+import com.skthon.sixthsensebe.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,5 +31,9 @@ public class ImageInfo {
 
   @Column(name = "infer_result", nullable = false)
   private String inferResult;
+
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
 }

@@ -2,6 +2,7 @@ package com.skthon.sixthsensebe.domain.user.entity;
 
 import com.skthon.sixthsensebe.domain.jobapplication.entity.JobApplication;
 import com.skthon.sixthsensebe.global.common.BaseTimeEntity;
+import com.skthon.sixthsensebe.global.naverocr.entity.ImageInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,6 +33,9 @@ public class User extends BaseTimeEntity {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private Role role;
+
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private ImageInfo imageInfo;
 
   // 사용자는 여러개의 채용공고를 지원할 수 있음
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
