@@ -1,19 +1,12 @@
 package com.skthon.sixthsensebe.domain.user.entity;
 
+import com.skthon.sixthsensebe.domain.jobapplication.entity.JobApplication;
 import com.skthon.sixthsensebe.global.common.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,4 +32,8 @@ public class User extends BaseTimeEntity {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private Role role;
+
+  // 사용자는 여러개의 채용공고를 지원할 수 있음
+  @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<JobApplication> jobApplications = new ArrayList<>();
 }
