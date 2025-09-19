@@ -17,8 +17,8 @@ public enum ImageFormat {
   @JsonValue
   private final String value;
 
-  // 파일 확장자로부터 ImageFormat을 찾는 메서드
-  public static ImageFormat fromExtension(String extension) {
+  // 파일 확장자로부터 요청에 맞는 확장자를 찾는 메서드
+  public static ImageFormat findExtension(String extension) {
     if (extension == null || extension.isEmpty()) {
       throw new IllegalArgumentException("확장자를 찾을 수 없습니다.");
     }
@@ -37,8 +37,8 @@ public enum ImageFormat {
   }
 
 
-  // 파일명으로부터 ImageFormat을 추출하는 메서드
-  public static ImageFormat fromFileName(String fileName) {
+  // 파일명으로부터 확장자을 추출하는 메서드
+  public static ImageFormat extractImageFormat(String fileName) {
     if (fileName == null || fileName.isEmpty()) {
       throw new IllegalArgumentException("파일명에서 확장자를 찾을 수 없습니다.");
     }
@@ -49,8 +49,6 @@ public enum ImageFormat {
     }
 
     String extension = fileName.substring(lastDotIndex + 1);
-    return fromExtension(extension);
+    return findExtension(extension);
   }
-}
-
 }
