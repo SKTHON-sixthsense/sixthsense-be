@@ -34,6 +34,6 @@ public class User extends BaseTimeEntity {
   private Role role;
 
   // 사용자는 여러개의 채용공고를 지원할 수 있음
-  @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<JobApplication> jobApplications = new ArrayList<>();
 }
