@@ -102,6 +102,7 @@ public class S3Service {
 
     return switch (pathName) {
       case JOBPOSTING -> s3Config.getJobposting();
+      case INTRODUCTION -> s3Config.getIntroduction();
       case PROFILE -> s3Config.getProfile();
     }
         + '/'
@@ -130,9 +131,11 @@ public class S3Service {
     }
   }
 
+  // 이미지 파일 관련 기능은 거의 개인 맞춤형이라 리스트로 쓸일이 채용공고 말고는 없을 듯(고려사항)
   public List<String> getAllFiles(PathName pathName) {
     String prefix = switch (pathName) {
       case JOBPOSTING -> s3Config.getJobposting();
+      case INTRODUCTION -> s3Config.getIntroduction();
       case PROFILE -> s3Config.getProfile();
     };
 
@@ -153,6 +156,7 @@ public class S3Service {
   public void deleteFile(PathName pathName, String fileName) {
     String prefix = switch (pathName) {
       case JOBPOSTING -> s3Config.getJobposting();
+      case INTRODUCTION -> s3Config.getIntroduction();
       case PROFILE -> s3Config.getProfile();
     };
     String keyName = prefix + "/" + fileName;

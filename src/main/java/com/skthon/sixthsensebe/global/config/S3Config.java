@@ -33,6 +33,9 @@ public class S3Config {
   @Value("${cloud.aws.s3.path.jobposting}")
   private String jobposting;
 
+  @Value("${cloud.aws.s3.path.introduction}")
+  private String introduction;
+
   @Value("${cloud.aws.s3.path.profile}")
   private String profile;
 

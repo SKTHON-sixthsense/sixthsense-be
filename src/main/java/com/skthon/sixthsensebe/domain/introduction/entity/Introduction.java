@@ -24,7 +24,7 @@ public class Introduction {
   @Column(name = "image_name")
   private String imageName; // 이미지 이름(파일명), 이 필드 지우고 s3 url로 파일명 그냥 못가져오나
 
-  @Column(name = "description")
+  @Column(name = "description", columnDefinition = "TEXT")
   private String description; // 자기소개서 내용
 
   @Enumerated(EnumType.STRING)
