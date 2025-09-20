@@ -1,8 +1,8 @@
 package com.skthon.sixthsensebe.domain.user.entity;
 
+import com.skthon.sixthsensebe.domain.introduction.entity.Introduction;
 import com.skthon.sixthsensebe.domain.jobapplication.entity.JobApplication;
 import com.skthon.sixthsensebe.global.common.BaseTimeEntity;
-import com.skthon.sixthsensebe.global.naverocr.entity.ImageInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,7 +35,7 @@ public class User extends BaseTimeEntity {
   private Role role;
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private ImageInfo imageInfo;
+  private Introduction introduction;
 
   // 사용자는 여러개의 채용공고를 지원할 수 있음
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
