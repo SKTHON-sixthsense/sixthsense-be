@@ -64,4 +64,8 @@ public class JobPostingResponse {
 
   @Schema(description = "가게 전화번호")
   private String callNum;
+
+  @Schema(description = "생성 일", example = "09-20")
+  private String createDate;
+
 }

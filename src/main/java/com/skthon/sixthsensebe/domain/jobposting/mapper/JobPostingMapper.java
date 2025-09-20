@@ -7,12 +7,16 @@ import com.skthon.sixthsensebe.global.config.S3Config;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
+
 @AllArgsConstructor
 @Component
 public class JobPostingMapper {
 
   private final AmazonS3 amazonS3;
   private final S3Config s3Config;
+
+  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM-dd");
 
   // entity -> response dto
   public JobPostingResponse toJobPostingResponse(JobPosting jobPosting) {
@@ -34,6 +38,8 @@ public class JobPostingMapper {
         .preferredQualifications(jobPosting.getPreferredQualifications())
         .homepageUrl(jobPosting.getHomepageUrl())
         .callNum(jobPosting.getCallNum())
+        .createDate(jobPosting.getCreatedAt() != null ?
+            jobPosting.getCreatedAt().format(DATE_FORMATTER) : null)
         .build();
   }
 }

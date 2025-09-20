@@ -5,7 +5,9 @@ import com.skthon.sixthsensebe.domain.jobposting.entity.JobPosting;
 import com.skthon.sixthsensebe.domain.jobposting.mapper.JobPostingMapper;
 import com.skthon.sixthsensebe.domain.jobposting.repository.JobPostingRepository;
 import com.skthon.sixthsensebe.domain.search.dto.request.SearchRequest;
+import com.skthon.sixthsensebe.domain.search.entity.SearchResult;
 import com.skthon.sixthsensebe.domain.search.entity.Seoul;
+import com.skthon.sixthsensebe.domain.search.repository.SearchResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,7 @@ public class SearchService {
 
   private final JobPostingRepository jobPostingRepository;
   private final JobPostingMapper jobPostingMapper;
+  private final SearchResultRepository searchResultRepository;
 
   public List<JobPostingResponse> searchJobPostings(SearchRequest request) {
     log.info("=== 채용공고 검색 시작 ===");
@@ -41,6 +44,9 @@ public class SearchService {
         .collect(Collectors.toList());
 
     log.info("필터링 결과: 전체 {}개 중 {}개 매칭", allJobPostings.size(), filteredJobPostings.size());
+
+    // 검색 결과 저장
+    saveSearchResult(request, filteredJobPostings);
 
     // DTO 변환
     return filteredJobPostings.stream()
@@ -105,6 +111,66 @@ public class SearchService {
         Sort.Direction.ASC : Sort.Direction.DESC;
 
     return Sort.by(direction, sortBy);
+  }
+
+  private void saveSearchResult(SearchRequest request, List<JobPosting> filteredJobPostings) {
+    List<Long> jobPostingIds = filteredJobPostings.stream()
+        .map(JobPosting::getId)
+        .collect(Collectors.toList());
+
+    SearchResult searchResult = SearchResult.builder()
+        .district(request.getDistrict())
+        .jobCategories(request.getJobCategories())
+        .detailJobCategories(request.getDetailJobCategories())
+        .jobPostingIds(jobPostingIds)
+        .resultCount(filteredJobPostings.size())
+        .build();
+
+    searchResultRepository.save(searchResult);
+    log.info("검색 결과 저장 완료 - ID: {}, 결과 개수: {}", searchResult.getId(), searchResult.getResultCount());
+  }
+
+  public List<JobPostingResponse> getSavedSearchResults() {
+    log.info("=== 저장된 검색 결과 조회 ===");
+    List<SearchResult> searchResults = searchResultRepository.findAllByOrderByCreatedAtDesc();
+
+    // 모든 검색 결과의 채용공고 ID를 합쳐서 중복 제거
+    List<Long> allJobPostingIds = searchResults.stream()
+        .flatMap(result -> result.getJobPostingIds().stream())
+        .distinct()
+        .collect(Collectors.toList());
+
+    log.info("저장된 검색 결과에서 총 {}개의 고유 채용공고 발견", allJobPostingIds.size());
+
+    // JobPosting 조회 및 DTO 변환
+    List<JobPosting> jobPostings = allJobPostingIds.stream()
+        .map(jobPostingRepository::findById)
+        .filter(optional -> optional.isPresent())
+        .map(optional -> optional.get())
+        .collect(Collectors.toList());
+
+    return jobPostings.stream()
+        .map(jobPostingMapper::toJobPostingResponse)
+        .collect(Collectors.toList());
+  }
+
+  public List<JobPostingResponse> getJobPostingsBySearchResult(Long searchResultId) {
+    log.info("=== 검색 결과로 채용공고 조회 - ID: {} ===", searchResultId);
+
+    SearchResult searchResult = searchResultRepository.findById(searchResultId)
+        .orElseThrow(() -> new IllegalArgumentException("검색 결과를 찾을 수 없습니다: " + searchResultId));
+
+    List<JobPosting> jobPostings = searchResult.getJobPostingIds().stream()
+        .map(jobPostingRepository::findById)
+        .filter(optional -> optional.isPresent())
+        .map(optional -> optional.get())
+        .collect(Collectors.toList());
+
+    log.info("검색 결과로 조회된 채용공고 개수: {}", jobPostings.size());
+
+    return jobPostings.stream()
+        .map(jobPostingMapper::toJobPostingResponse)
+        .collect(Collectors.toList());
   }
 
   public List<Seoul> getAllDistricts() {
