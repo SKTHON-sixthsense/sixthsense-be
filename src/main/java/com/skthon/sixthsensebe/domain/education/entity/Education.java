@@ -29,6 +29,9 @@ public class Education {
   @Column(nullable = false)
   private String title; // 교육공고 제목
 
+  @Column(nullable = false)
+  private String summary; // 교육공고 간단한 설명
+
   @Lob
   @Column(nullable = false, columnDefinition = "TEXT")
   private String description; // 교육공고 설명

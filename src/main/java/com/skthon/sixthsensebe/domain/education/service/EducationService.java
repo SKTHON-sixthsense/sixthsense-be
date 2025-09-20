@@ -22,20 +22,20 @@ public class EducationService {
   // 교육공고 요약 전체 조회
   @Transactional
   public List<EduSummaryResponse> getAllEduSummaries() {
-    log.info("[EducationService] 고육공고 요약 전체 조회 시도");
+    log.info("[EducationService] 교육공고 요약 전체 조회 시도");
     List<Education> educationList = educationRepository.findAll();
 
-    log.info("[EducationService] 고육공고 요약 전체 조회 완료 ");
+    log.info("[EducationService] 교육공고 요약 전체 조회 완료");
     return educationList.stream().map(this::toEduSummaryResponse).toList();
   }
 
   // 교육공고 단일 조회
   @Transactional
   public EduResponse getEduById(Long id) {
-    log.info("[EducationService] 고육공고 단일 조회 시도");
+    log.info("[EducationService] 교육공고 단일 조회 시도");
     Education education = educationRepository.findById(id)
         .orElseThrow(() -> new CustomException(EduErrorCode.EDU_NOT_FOUND));
-    log.info("[EducationService] 고육공고 단일 조회 완료 educationId = {}", education.getId());
+    log.info("[EducationService] 교육공고 단일 조회 완료 educationId = {}", education.getId());
     return toEduResponse(education);
   }
 
@@ -43,7 +43,7 @@ public class EducationService {
   public EduSummaryResponse toEduSummaryResponse(Education education) {
     return EduSummaryResponse.builder()
         .title(education.getTitle())
-        .description(education.getDescription())
+        .summary(education.getSummary())
         .isLiked(false) // 추후 변경 필요
         .build();
   }
