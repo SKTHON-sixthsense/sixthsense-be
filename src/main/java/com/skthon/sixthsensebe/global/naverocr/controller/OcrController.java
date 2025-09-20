@@ -1,3 +1,4 @@
+/*
 package com.skthon.sixthsensebe.global.naverocr.controller;
 
 import com.skthon.sixthsensebe.global.naverocr.service.OcrService;
@@ -21,11 +22,12 @@ public class OcrController {
   private final OcrService ocrService;
 
   @Operation(
-      summary = "사용자가 업로드한 이미지의 텍스트를 OCR로 추출하는 API",
-      description = "업로드한 자기소개서 사진의 텍스트를 OCR로 추출하는 API")
+      summary = "Naver Ocr Api",
+      description = "test")
   @PostMapping("/{userId}")
   public ResponseEntity<ResponseEntity<String>> testOcr(@PathVariable Long userId) {
     ResponseEntity<String> response = ocrService.extractText(userId);
     return ResponseEntity.ok(response);
   }
 }
+*/
