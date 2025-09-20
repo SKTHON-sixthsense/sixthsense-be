@@ -16,8 +16,4 @@ public class TextField {
   @Schema(description = "인식된 텍스트", example = "손글씨로 작성된 텍스트")
   @JsonProperty("inferText")
   private String inferText;
-
-  @Schema(description = "인식 신뢰도", example = "0.95")
-  @JsonProperty("inferConfidence")
-  private Double inferConfidence;
 }
