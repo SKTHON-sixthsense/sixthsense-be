@@ -2,6 +2,8 @@ package com.skthon.sixthsensebe.domain.jobposting.controller;
 
 import com.skthon.sixthsensebe.domain.jobposting.dto.request.CreateJobPostingRequest;
 import com.skthon.sixthsensebe.domain.jobposting.dto.response.JobPostingResponse;
+import com.skthon.sixthsensebe.domain.jobposting.entity.EmploymentType;
+import com.skthon.sixthsensebe.domain.jobposting.entity.JobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.service.JobPostingService;
 import com.skthon.sixthsensebe.global.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,12 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -39,9 +36,11 @@ public class JobPostingController {
       @RequestPart(value = "jobposting") @Valid CreateJobPostingRequest request,
       @Parameter(description = "업체 상세 요강 이미지",
           content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
-      @RequestPart(value = "image") MultipartFile file) {
+      @RequestPart(value = "image") MultipartFile file,
+      @Parameter(description = "고용 형태") @RequestParam("employment") EmploymentType employmentType,
+      @Parameter(description = "모집 직종") @RequestParam("jobcategory") JobCategory jobCategory) {
 
-    JobPostingResponse response = jobPostingService.createJobPosting(request, file);
+    JobPostingResponse response = jobPostingService.createJobPosting(request, file, employmentType, jobCategory);
 
     return ResponseEntity.ok(BaseResponse.success("채용공고가 성공적으로 등록되었습니다.", response));
 

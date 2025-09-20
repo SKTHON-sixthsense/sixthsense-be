@@ -1,6 +1,7 @@
 package com.skthon.sixthsensebe.domain.jobposting.dto.response;
 
 import com.skthon.sixthsensebe.domain.jobposting.entity.EmploymentType;
+import com.skthon.sixthsensebe.domain.jobposting.entity.JobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.entity.RecruitmentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -38,7 +39,7 @@ public class JobPostingResponse {
   private String workHours;
 
   @Schema(description = "모집 직종")
-  private String jobCategory;
+  private JobCategory jobCategory;
 
   @Schema(description = "고용 형태 (알바/정직원)")
   private EmploymentType employmentType;

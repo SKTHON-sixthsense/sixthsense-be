@@ -48,8 +48,9 @@ public class JobPosting extends BaseTimeEntity {
   @Column(name = "workHour")
   private String workHour; // 근무 시간
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "jobCategory")
-  private String jobCategory; // 모집 직종
+  private JobCategory jobCategory; // 모집 직종
 
   @Enumerated(EnumType.STRING)
   @Column(name = "employmentType")

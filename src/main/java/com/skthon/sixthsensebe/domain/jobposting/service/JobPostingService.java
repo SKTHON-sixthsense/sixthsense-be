@@ -2,6 +2,8 @@ package com.skthon.sixthsensebe.domain.jobposting.service;
 
 import com.skthon.sixthsensebe.domain.jobposting.dto.request.CreateJobPostingRequest;
 import com.skthon.sixthsensebe.domain.jobposting.dto.response.JobPostingResponse;
+import com.skthon.sixthsensebe.domain.jobposting.entity.EmploymentType;
+import com.skthon.sixthsensebe.domain.jobposting.entity.JobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.entity.JobPosting;
 import com.skthon.sixthsensebe.domain.jobposting.entity.RecruitmentStatus;
 import com.skthon.sixthsensebe.domain.jobposting.exception.JobPostingErrorCode;
@@ -28,7 +30,11 @@ public class JobPostingService {
   private final S3Service s3Service;
 
   @Transactional
-  public JobPostingResponse createJobPosting(CreateJobPostingRequest request, MultipartFile file) {
+  public JobPostingResponse createJobPosting(
+      CreateJobPostingRequest request,
+      MultipartFile file,
+      EmploymentType employmentType,
+      JobCategory jobCategory) {
 
     log.info("=== 요청 데이터 확인 ===");
     log.info("postName: {}", request.getPostName());
@@ -46,8 +52,8 @@ public class JobPostingService {
           .salary(request.getSalary())
           .workDays(request.getWorkDays())
           .workHour(request.getWorkHours())
-          .jobCategory(request.getJobCategory())
-          .employmentType(request.getEmploymentType())
+          .jobCategory(jobCategory)
+          .employmentType(employmentType)
           .benefits(request.getBenefits())
           .educationRequirement(request.getEducationRequirement())
           .preferredQualifications(request.getPreferredQualifications())

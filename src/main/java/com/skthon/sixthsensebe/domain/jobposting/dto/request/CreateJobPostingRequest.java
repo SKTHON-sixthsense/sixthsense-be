@@ -1,6 +1,5 @@
 package com.skthon.sixthsensebe.domain.jobposting.dto.request;
 
-import com.skthon.sixthsensebe.domain.jobposting.entity.EmploymentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,8 +35,8 @@ public class CreateJobPostingRequest {
   @Schema(description = "모집 직종", example = "주방보조")
   private String jobCategory;
 
-  @Schema(description = "고용 형태 (알바/정직원)", example = "PARTTIME")
-  private EmploymentType employmentType;
+  /*@Schema(description = "고용 형태 (알바/정직원)", example = "PARTTIME")
+  private EmploymentType employmentType;*/
 
   @Schema(description = "복리 후생", example = "식대지원")
   private String benefits;
