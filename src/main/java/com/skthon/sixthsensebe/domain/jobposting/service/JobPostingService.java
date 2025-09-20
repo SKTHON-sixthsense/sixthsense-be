@@ -2,8 +2,11 @@ package com.skthon.sixthsensebe.domain.jobposting.service;
 
 import com.skthon.sixthsensebe.domain.jobposting.dto.request.CreateJobPostingRequest;
 import com.skthon.sixthsensebe.domain.jobposting.dto.response.JobPostingResponse;
+import com.skthon.sixthsensebe.domain.jobposting.entity.EmploymentType;
 import com.skthon.sixthsensebe.domain.jobposting.entity.JobPosting;
 import com.skthon.sixthsensebe.domain.jobposting.entity.RecruitmentStatus;
+import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.DetailJobCategory;
+import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.JobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.exception.JobPostingErrorCode;
 import com.skthon.sixthsensebe.domain.jobposting.mapper.JobPostingMapper;
 import com.skthon.sixthsensebe.domain.jobposting.repository.JobPostingRepository;
@@ -28,7 +31,12 @@ public class JobPostingService {
   private final S3Service s3Service;
 
   @Transactional
-  public JobPostingResponse createJobPosting(CreateJobPostingRequest request, MultipartFile file) {
+  public JobPostingResponse createJobPosting(
+      CreateJobPostingRequest request,
+      MultipartFile file,
+      EmploymentType employmentType,
+      JobCategory jobCategory,
+      List<DetailJobCategory> detailJobCategory) {
 
     log.info("=== 요청 데이터 확인 ===");
     log.info("postName: {}", request.getPostName());
@@ -46,8 +54,9 @@ public class JobPostingService {
           .salary(request.getSalary())
           .workDays(request.getWorkDays())
           .workHour(request.getWorkHours())
-          .jobCategory(request.getJobCategory())
-          .employmentType(request.getEmploymentType())
+          .jobCategory(jobCategory)
+          .detailJobCategory(detailJobCategory)
+          .employmentType(employmentType)
           .benefits(request.getBenefits())
           .educationRequirement(request.getEducationRequirement())
           .preferredQualifications(request.getPreferredQualifications())
@@ -84,6 +93,12 @@ public class JobPostingService {
     return jobPostings.stream()
         .map(jobPostingMapper::toJobPostingResponse)
         .toList();
+  }
+
+  public JobPostingResponse getJobPosting(Long id) {
+    JobPosting jobPosting = jobPostingRepository.findById(id)
+        .orElseThrow(() -> new CustomException(JobPostingErrorCode.JOB_POSTING_NOT_FOUND));
+    return jobPostingMapper.toJobPostingResponse(jobPosting);
   }
 
 }
