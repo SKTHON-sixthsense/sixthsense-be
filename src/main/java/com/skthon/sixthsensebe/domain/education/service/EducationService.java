@@ -53,6 +53,7 @@ public class EducationService {
 
   public EduSummaryResponse toEduSummaryResponse(Education education) {
     return EduSummaryResponse.builder()
+        .id(education.getId())
         .title(education.getTitle())
         .summary(education.getSummary())
         .isLiked(false) // 추후 변경 필요
@@ -61,6 +62,7 @@ public class EducationService {
 
   public EduResponse toEduResponse(Education education) {
     return EduResponse.builder()
+        .id(education.getId())
         .title(education.getTitle())
         .description(education.getDescription())
         .requirement(education.getRequirement())
