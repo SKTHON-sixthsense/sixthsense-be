@@ -9,6 +9,9 @@ import lombok.Getter;
 @Schema(title = "EduResponse DTO", description = "교육공고 응답")
 public class EduResponse {
 
+  @Schema(description = "교육공고 id", example = "1")
+  private Long id;
+
   @Schema(description = "교육공고 제목", example = "간병사")
   private String title;
 
