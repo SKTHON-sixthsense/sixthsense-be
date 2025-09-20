@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Seoul {
 
+  ALL("서울 전체"),
   GANGNAM("강남구"),
   GANGDONG("강동구"),
   GANGBUK("강북구"),
