@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @Schema(title = "EduResponse DTO", description = "교육공고 응답")
 public class EduResponse {
 
@@ -14,6 +14,9 @@ public class EduResponse {
 
   @Schema(description = "교육공고 설명", example = "다양한 돌봄 현장에서 활용되는 자격증")
   private String description;
+
+  @Schema(description = "교육공고 관련 이미지 url", example = "...")
+  private String s3url;
 
   @Schema(description = "자격요건", example = "16세 이상 누구나")
   private String requirement;

@@ -1,21 +1,12 @@
 package com.skthon.sixthsensebe.domain.education.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Getter
-@Builder
+@Setter
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "education")
@@ -31,6 +22,9 @@ public class Education {
 
   @Column(nullable = false)
   private String summary; // 교육공고 간단한 설명
+
+  @Column(nullable = true)
+  private String s3url; // 교육공고 관련 이미지 url
 
   @Lob
   @Column(nullable = false, columnDefinition = "TEXT")

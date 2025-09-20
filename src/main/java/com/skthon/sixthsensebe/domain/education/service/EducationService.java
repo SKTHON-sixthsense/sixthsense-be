@@ -6,11 +6,12 @@ import com.skthon.sixthsensebe.domain.education.entity.Education;
 import com.skthon.sixthsensebe.domain.education.exception.EduErrorCode;
 import com.skthon.sixthsensebe.domain.education.repository.EducationRepository;
 import com.skthon.sixthsensebe.global.exception.CustomException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -39,6 +40,16 @@ public class EducationService {
     return toEduResponse(education);
   }
 
+  // EducationService에 추가
+  @Transactional
+  public void updateEducationImage(Long id, String s3url) {
+    Education education = educationRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("교육 정보를 찾을 수 없습니다."));
+
+    education.setS3url(s3url);  // Entity에 업데이트 메서드 필요
+    educationRepository.save(education);
+  }
+
 
   public EduSummaryResponse toEduSummaryResponse(Education education) {
     return EduSummaryResponse.builder()
@@ -53,6 +64,7 @@ public class EducationService {
         .title(education.getTitle())
         .description(education.getDescription())
         .requirement(education.getRequirement())
+        .s3url(education.getS3url())
         .competentAuthority(education.getCompetentAuthority())
         .issuingAuthority(education.getIssuingAuthority())
         .isLiked(false) // 추후 변경 필요

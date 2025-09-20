@@ -2,15 +2,30 @@ package com.skthon.sixthsensebe.global.config;
 
 import com.skthon.sixthsensebe.domain.education.entity.Education;
 import com.skthon.sixthsensebe.domain.education.repository.EducationRepository;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
+
+@Slf4j
+@RequiredArgsConstructor
 @Configuration
 public class EduDummyConfig {
 
+  @Bean
   public CommandLineRunner initData(EducationRepository educationRepository) {
     return args -> {
+
+      // 데이터 중복 저장 방지
+      if (educationRepository.count() > 0) {
+        log.info("Education 데이터가 이미 존재합니다. 초기화를 건너뜁니다.");
+        return;
+      }
+
       educationRepository.saveAll(List.of(
           Education.builder()
               .title("간병사")
