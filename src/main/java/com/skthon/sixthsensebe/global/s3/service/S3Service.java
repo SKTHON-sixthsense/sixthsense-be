@@ -102,6 +102,7 @@ public class S3Service {
 
     return switch (pathName) {
       case JOBPOSTING -> s3Config.getJobposting();
+      case EDUCATION -> s3Config.getEducation();
       case INTRODUCTION -> s3Config.getIntroduction();
       case PROFILE -> s3Config.getProfile();
     }
@@ -135,6 +136,7 @@ public class S3Service {
   public List<String> getAllFiles(PathName pathName) {
     String prefix = switch (pathName) {
       case JOBPOSTING -> s3Config.getJobposting();
+      case EDUCATION -> s3Config.getEducation();
       case INTRODUCTION -> s3Config.getIntroduction();
       case PROFILE -> s3Config.getProfile();
     };
@@ -156,6 +158,7 @@ public class S3Service {
   public void deleteFile(PathName pathName, String fileName) {
     String prefix = switch (pathName) {
       case JOBPOSTING -> s3Config.getJobposting();
+      case EDUCATION -> s3Config.getEducation();
       case INTRODUCTION -> s3Config.getIntroduction();
       case PROFILE -> s3Config.getProfile();
     };
