@@ -4,6 +4,7 @@ import com.skthon.sixthsensebe.global.config.converter.StringToDetailJobCategory
 import com.skthon.sixthsensebe.global.config.converter.StringToDetailJobCategoryListConverter;
 import com.skthon.sixthsensebe.global.config.converter.StringToEmploymentTypeConverter;
 import com.skthon.sixthsensebe.global.config.converter.StringToJobCategoryConverter;
+import com.skthon.sixthsensebe.global.config.converter.StringToSeoulConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -17,6 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
   private final StringToEmploymentTypeConverter stringToEmploymentTypeConverter;
   private final StringToDetailJobCategoryConverter stringToDetailJobCategoryConverter;
   private final StringToDetailJobCategoryListConverter stringToDetailJobCategoryListConverter;
+  private final StringToSeoulConverter stringToSeoulConverter;
 
   @Override
   public void addFormatters(FormatterRegistry registry) {
@@ -24,5 +26,6 @@ public class WebConfig implements WebMvcConfigurer {
     registry.addConverter(stringToEmploymentTypeConverter);
     registry.addConverter(stringToDetailJobCategoryConverter);
     registry.addConverter(stringToDetailJobCategoryListConverter);
+    registry.addConverter(stringToSeoulConverter);
   }
 }
