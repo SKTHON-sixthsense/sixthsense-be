@@ -1,5 +1,6 @@
 package com.skthon.sixthsensebe.domain.introduction.service;
 
+import com.skthon.sixthsensebe.domain.introduction.dto.response.IntroductionResponse;
 import com.skthon.sixthsensebe.domain.introduction.entity.Introduction;
 import com.skthon.sixthsensebe.domain.introduction.repository.IntroductionRepository;
 import com.skthon.sixthsensebe.domain.user.entity.User;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -213,5 +215,39 @@ public class UploadService {
       log.error("자기소개서 저장 실패 - userId: {}", userId, e);
       throw new CustomException(S3ErrorCode.FILE_SERVER_ERROR); // 적절한 에러코드 사용
     }
+  }
+
+  public List<IntroductionResponse> getAllIntroductions() {
+    log.info("=== 모든 자기소개서 조회 ===");
+    List<Introduction> introductions = introductionRepository.findAll();
+
+    return introductions.stream()
+        .map(this::toIntroductionResponse)
+        .collect(Collectors.toList());
+  }
+
+  public IntroductionResponse getIntroductionByUserId(Long userId) {
+    log.info("=== 사용자별 자기소개서 조회 - userId: {} ===", userId);
+
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+
+    if (user.getIntroduction() == null) {
+      return null;
+    }
+
+    return toIntroductionResponse(user.getIntroduction());
+  }
+
+  private IntroductionResponse toIntroductionResponse(Introduction introduction) {
+    return IntroductionResponse.builder()
+        .id(introduction.getId())
+        .s3Url(introduction.getS3Url())
+        .imageName(introduction.getImageName())
+        .description(introduction.getDescription())
+        .imageFormat(introduction.getImageFormat())
+        .inferResult(introduction.getInferResult())
+        .userId(introduction.getUser() != null ? introduction.getUser().getId() : null)
+        .build();
   }
 }
