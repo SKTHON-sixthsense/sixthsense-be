@@ -27,6 +27,7 @@ public class JobPostingMapper {
         .workDays(jobPosting.getWorkDays())
         .workHours(jobPosting.getWorkHour())
         .jobCategory(jobPosting.getJobCategory())
+        .detailJobCategory(jobPosting.getDetailJobCategory())
         .employmentType(jobPosting.getEmploymentType())
         .benefits(jobPosting.getBenefits())
         .educationRequirement(jobPosting.getEducationRequirement())

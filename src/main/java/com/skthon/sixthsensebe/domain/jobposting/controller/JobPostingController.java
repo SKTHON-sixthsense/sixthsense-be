@@ -41,9 +41,9 @@ public class JobPostingController {
       @RequestPart(value = "image") MultipartFile file,
       @Parameter(description = "고용 형태") @RequestParam("employment") EmploymentType employmentType,
       @Parameter(description = "모집 직종 대분류") @RequestParam("jobcategory") JobCategory jobCategory,
-      @Parameter(description = "모집 직종 세부분류") @RequestParam("detailjobcategory") DetailJobCategory detailJobCategory) {
+      @Parameter(description = "모집 직종 세부분류") @RequestParam("detailjobcategory") List<DetailJobCategory> detailJobCategory) {
 
-    JobPostingResponse response = jobPostingService.createJobPosting(request, file, employmentType, jobCategory, detailJobCategory.getValue());
+    JobPostingResponse response = jobPostingService.createJobPosting(request, file, employmentType, jobCategory, detailJobCategory);
 
     return ResponseEntity.ok(BaseResponse.success("채용공고가 성공적으로 등록되었습니다.", response));
 

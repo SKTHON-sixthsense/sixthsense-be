@@ -2,10 +2,13 @@ package com.skthon.sixthsensebe.domain.jobposting.dto.response;
 
 import com.skthon.sixthsensebe.domain.jobposting.entity.EmploymentType;
 import com.skthon.sixthsensebe.domain.jobposting.entity.RecruitmentStatus;
+import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.DetailJobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.JobCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -40,6 +43,9 @@ public class JobPostingResponse {
 
   @Schema(description = "모집 직종")
   private JobCategory jobCategory;
+
+  @Schema(description = "모집 직종")
+  private List<DetailJobCategory> detailJobCategory;
 
   @Schema(description = "고용 형태 (알바/정직원)")
   private EmploymentType employmentType;
