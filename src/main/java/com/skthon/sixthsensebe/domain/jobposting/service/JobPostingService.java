@@ -3,9 +3,9 @@ package com.skthon.sixthsensebe.domain.jobposting.service;
 import com.skthon.sixthsensebe.domain.jobposting.dto.request.CreateJobPostingRequest;
 import com.skthon.sixthsensebe.domain.jobposting.dto.response.JobPostingResponse;
 import com.skthon.sixthsensebe.domain.jobposting.entity.EmploymentType;
-import com.skthon.sixthsensebe.domain.jobposting.entity.JobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.entity.JobPosting;
 import com.skthon.sixthsensebe.domain.jobposting.entity.RecruitmentStatus;
+import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.JobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.exception.JobPostingErrorCode;
 import com.skthon.sixthsensebe.domain.jobposting.mapper.JobPostingMapper;
 import com.skthon.sixthsensebe.domain.jobposting.repository.JobPostingRepository;
@@ -34,7 +34,8 @@ public class JobPostingService {
       CreateJobPostingRequest request,
       MultipartFile file,
       EmploymentType employmentType,
-      JobCategory jobCategory) {
+      JobCategory jobCategory,
+      String detailJobCategory) {
 
     log.info("=== 요청 데이터 확인 ===");
     log.info("postName: {}", request.getPostName());
@@ -53,6 +54,7 @@ public class JobPostingService {
           .workDays(request.getWorkDays())
           .workHour(request.getWorkHours())
           .jobCategory(jobCategory)
+          .detailJobCategory(detailJobCategory)
           .employmentType(employmentType)
           .benefits(request.getBenefits())
           .educationRequirement(request.getEducationRequirement())

@@ -1,6 +1,7 @@
 package com.skthon.sixthsensebe.domain.jobposting.entity;
 
 import com.skthon.sixthsensebe.domain.jobapplication.entity.JobApplication;
+import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.JobCategory;
 import com.skthon.sixthsensebe.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -49,8 +50,11 @@ public class JobPosting extends BaseTimeEntity {
   private String workHour; // 근무 시간
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "jobCategory")
-  private JobCategory jobCategory; // 모집 직종
+  @Column(name = "jobCategory", length = 50)
+  private JobCategory jobCategory; // 모집 직종 대분류
+
+  @Column(name = "detailJobCategory", length = 50)
+  private String detailJobCategory; // 모집 직종 세부분류
 
   @Enumerated(EnumType.STRING)
   @Column(name = "employmentType")

@@ -32,8 +32,11 @@ public class CreateJobPostingRequest {
   @Schema(description = "근무 시간", example = "협의")
   private String workHours;
 
-  @Schema(description = "모집 직종", example = "주방보조")
+  @Schema(description = "모집 직종 대분류", example = "요식업")
   private String jobCategory;
+
+  @Schema(description = "모집 직종 세부분류", example = "주방 보조")
+  private String detailJobCategory;
 
   /*@Schema(description = "고용 형태 (알바/정직원)", example = "PARTTIME")
   private EmploymentType employmentType;*/
