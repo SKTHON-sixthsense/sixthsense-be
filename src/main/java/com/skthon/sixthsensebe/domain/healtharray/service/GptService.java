@@ -58,35 +58,54 @@ public class GptService {
           .build();
     }
 
-    // 프롬프트 생성 메소드
-    public List<Map<String, String>> createPrompt(GptRequest gptRequest, List<Health> userHealthList) {
-      // Health enum 리스트를 문자열로 변환
-      String healthStr = userHealthList.stream()
-          .map(Enum::name)
-          .collect(Collectors.joining(", "));
-
-      // 상세 직무 문자열
-      String detailJobs = String.join(", ", gptRequest.getDetailJobCategories());
-
-      // GPT 메시지 content
-      String content = String.format("""
-                사용자의 건강정보: %s
-
-                채용공고 정보:
-                - ID: %d
-                - 직무 카테고리: %s
-                - 상세 직무: %s
-
-                요청사항:
-                사용자의 건강정보를 고려하여 가장 적합한 채용공고 하나의 ID만 숫자로 반환하세요.
-                """, healthStr, gptRequest.getId(), gptRequest.getJobCategory(), detailJobs);
-
-      // GPT API messages 포맷
-      return List.of(
-          Map.of("role", "system", "content", "당신은 50대 구직자 맞춤 채용 추천 도우미입니다."),
-          Map.of("role", "user", "content", content)
-      );
+  // 프롬프트 생성 메소드
+  public List<Map<String, String>> createPrompt(GptRequest gptRequest, List<Health> userHealthList) {
+    if (userHealthList == null || userHealthList.isEmpty()) {
+      throw new IllegalArgumentException("userHealthList가 비어있거나 null입니다.");
     }
+
+    // Health enum 리스트를 문자열로 변환
+    String healthStr = userHealthList.stream()
+        .map(Enum::name)
+        .collect(Collectors.joining(", "));
+
+    // 상세 직무 문자열
+    String detailJobs = String.join(", ", gptRequest.getDetailJobCategories());
+
+    // GPT 메시지 content
+    String content = String.format("""
+            사용자의 건강 상태: %s
+
+            채용공고 정보:
+            - ID: %d
+            - 직무 카테고리: %s
+            - 상세 직무: %s
+
+            조건:
+            - 사용자의 건강 상태를 고려해야 합니다.
+            - 사용자가 제약이 있는 신체 부위를 자주 사용해야 하는 채용공고는 제외하세요.
+              (예: 손이 불편한 경우, 손을 많이 사용하는 직무 제외)
+            - 건강을 해치지 않으면서 수행 가능한 채용공고를 선택하세요.
+
+            요청사항:
+            위 조건을 고려하여 가장 적합한 채용공고 한 개의 ID만 '숫자'로 반환하세요.
+            다른 설명이나 문장은 포함하지 마세요.
+            """, healthStr, gptRequest.getId(), gptRequest.getJobCategory(), detailJobs);
+
+    // GPT에 전달할 메시지 포맷
+    Map<String, String> systemMessage = Map.of(
+        "role", "system",
+        "content", "너는 건강 제약을 고려하여 채용공고 적합성을 판단하는 전문가 어시스턴트이다."
+    );
+
+    Map<String, String> userMessage = Map.of(
+        "role", "user",
+        "content", content
+    );
+
+    return List.of(systemMessage, userMessage);
+  }
+
 
 
   // gpt에게 요청하고 추천 채용 공고 id 반환받는 메소드
