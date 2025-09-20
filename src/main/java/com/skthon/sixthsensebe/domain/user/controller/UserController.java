@@ -12,7 +12,6 @@ import com.skthon.sixthsensebe.global.jwt.JwtProvider;
 import com.skthon.sixthsensebe.global.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -93,10 +92,10 @@ public class UserController {
       @Parameter(description = "성별", schema = @Schema(implementation = Gender.class), example = "MALE")
       @RequestParam(required = false) Gender gender,
 
-      @Parameter(description = "성격 태그(멀티)", array = @ArraySchema(schema = @Schema(implementation = Personality.class)))
+      @Parameter(description = "성격 태그(멀티)")
       @RequestParam(required = false) List<Personality> personality,
 
-      @Parameter(description = "건강 태그(멀티)", array = @ArraySchema(schema = @Schema(implementation = Health.class)))
+      @Parameter(description = "건강 태그(멀티)")
       @RequestParam(required = false) List<Health> health
   ) {
     UserResponse data = userService.replaceUserDetailParams(
