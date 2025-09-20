@@ -7,6 +7,7 @@ import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -29,9 +30,6 @@ public class Introduction {
   @Enumerated(EnumType.STRING)
   @Column(name = "image_format")
   private ImageFormat imageFormat; // 파일 확장자
-
-  @Column(name = "infer_confidence")
-  private Double inferConfidence; // 텍스트 추출 신뢰도
 
   @Column(name = "infer_result")
   private String inferResult; // 텍스트 추출 결
