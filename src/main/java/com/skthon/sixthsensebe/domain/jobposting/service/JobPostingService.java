@@ -86,4 +86,10 @@ public class JobPostingService {
         .toList();
   }
 
+  public JobPostingResponse getJobPosting(Long id) {
+    JobPosting jobPosting = jobPostingRepository.findById(id)
+        .orElseThrow(() -> new CustomException(JobPostingErrorCode.JOB_POSTING_NOT_FOUND));
+    return jobPostingMapper.toJobPostingResponse(jobPosting);
+  }
+
 }
