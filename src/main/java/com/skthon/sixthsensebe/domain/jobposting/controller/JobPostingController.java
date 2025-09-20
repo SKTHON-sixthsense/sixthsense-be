@@ -13,11 +13,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -41,5 +44,12 @@ public class JobPostingController {
 
     return ResponseEntity.ok(BaseResponse.success("채용공고가 성공적으로 등록되었습니다.", response));
 
+  }
+
+  @GetMapping("/jobpostings")
+  @Operation(summary = "채용 공고 전체 조회", description = "등록된 모든 채용공고를 조회합니다")
+  public ResponseEntity<BaseResponse<List<JobPostingResponse>>> getAllJobPostings() {
+    List<JobPostingResponse> responses = jobPostingService.getAllJobPostings();
+    return ResponseEntity.ok(BaseResponse.success("채용공고 목록을 성공적으로 조회했습니다.", responses));
   }
 }

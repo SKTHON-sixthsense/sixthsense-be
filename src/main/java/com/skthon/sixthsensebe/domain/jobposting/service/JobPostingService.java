@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 
 @Slf4j
 @Service
@@ -76,6 +77,13 @@ public class JobPostingService {
       throw new CustomException(JobPostingErrorCode.JOB_POSTING_CREATE_FAILED);
     }
 
+  }
+
+  public List<JobPostingResponse> getAllJobPostings() {
+    List<JobPosting> jobPostings = jobPostingRepository.findAll();
+    return jobPostings.stream()
+        .map(jobPostingMapper::toJobPostingResponse)
+        .toList();
   }
 
 }
