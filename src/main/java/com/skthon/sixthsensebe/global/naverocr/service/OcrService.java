@@ -7,7 +7,6 @@ import com.skthon.sixthsensebe.global.config.NaverOcrConfig;
 import com.skthon.sixthsensebe.global.exception.CustomException;
 import com.skthon.sixthsensebe.global.naverocr.dto.request.ImageRequest;
 import com.skthon.sixthsensebe.global.naverocr.dto.request.OcrRequest;
-import com.skthon.sixthsensebe.global.naverocr.dto.response.OcrResponse;
 import com.skthon.sixthsensebe.global.naverocr.entity.ImageFormat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,7 @@ public class OcrService {
   private final UserRepository userRepository;
   private final RestTemplate restTemplate; // RestAPI 호출용
 
-  public OcrResponse extractText(Long userId) {
+  public ResponseEntity<String> extractText(Long userId) {
 
     // 사용자 조회
     User user = userRepository.findById(userId)
@@ -39,7 +38,15 @@ public class OcrService {
       log.info("OCR 처리 시작");
 
       OcrRequest requestDto =
-          createOcrRequest();
+          createOcrRequest(user.getIntroduction().getS3Url(), user.getIntroduction().getImageName());
+
+      // Ocr API 호출
+      ResponseEntity<String> ocrResult = callOcrApi(requestDto); // 추후에 OcrResponse로 변경 (덱스트 후처리 후)
+
+      return ocrResult;
+
+    } catch (IOException e) { // callOcrApi()에서 IOException을 던지고 있기 때문에 받아서 다시 던져야 함
+      throw new RuntimeException(e);
     }
 
   }
@@ -102,7 +109,6 @@ public class OcrService {
   protected OcrResponse parseResponse(ResponseEntity<String> response) {
 
   }*/
-
 
 
 }
