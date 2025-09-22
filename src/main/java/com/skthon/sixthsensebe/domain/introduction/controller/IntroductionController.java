@@ -1,5 +1,6 @@
 package com.skthon.sixthsensebe.domain.introduction.controller;
 
+import com.skthon.sixthsensebe.domain.introduction.dto.response.IntroductionResponse;
 import com.skthon.sixthsensebe.domain.introduction.service.UploadService;
 import com.skthon.sixthsensebe.global.naverocr.dto.response.OcrResponse;
 import com.skthon.sixthsensebe.global.response.BaseResponse;
@@ -10,11 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -37,4 +37,25 @@ public class IntroductionController {
 
     return ResponseEntity.ok(BaseResponse.success("자기소개서 이미지 텍스트 처리 완료", response));
   }
+
+  @Operation(summary = "자기소개서 조회 API", description = "등록된 자기소개서를 조회")
+  @GetMapping("")
+  public ResponseEntity<BaseResponse<List<IntroductionResponse>>> getAllIntroductions() {
+    List<IntroductionResponse> introductions = uploadService.getAllIntroductions();
+    return ResponseEntity.ok(BaseResponse.success("자기소개서 전체 조회 성공", introductions));
+  }
+
+  @Operation(summary = "사용자별 자기소개서 조회 API", description = "특정 사용자의 자기소개서를 조회합니다")
+  @GetMapping("/user/{userId}")
+  public ResponseEntity<BaseResponse<IntroductionResponse>> getIntroductionByUserId(
+      @PathVariable Long userId) {
+    IntroductionResponse introduction = uploadService.getIntroductionByUserId(userId);
+
+    if (introduction == null) {
+      return ResponseEntity.ok(BaseResponse.success("해당 사용자의 자기소개서가 없습니다", null));
+    }
+
+    return ResponseEntity.ok(BaseResponse.success("사용자 자기소개서 조회 성공", introduction));
+  }
+
 }

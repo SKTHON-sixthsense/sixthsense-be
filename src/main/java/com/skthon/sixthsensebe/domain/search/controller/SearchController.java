@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,21 @@ public class SearchController {
     return ResponseEntity.ok(
         BaseResponse.success("채용공고 검색을 완료했습니다.", result)
     );
+  }
+
+  @GetMapping("/results")
+  @Operation(summary = "저장된 검색 결과 목록 조회", description = "이전에 검색했던 모든 채용공고들을 중복 제거하여 조회합니다.")
+  public ResponseEntity<BaseResponse<List<JobPostingResponse>>> getSavedSearchResults() {
+    List<JobPostingResponse> results = searchService.getSavedSearchResults();
+    return ResponseEntity.ok(BaseResponse.success("저장된 검색 결과를 조회했습니다.", results));
+  }
+
+  @GetMapping("/results/{searchResultId}/jobpostings")
+  @Operation(summary = "검색 결과로 채용공고 조회", description = "저장된 검색 결과 ID로 해당하는 채용공고들을 조회합니다.")
+  public ResponseEntity<BaseResponse<List<JobPostingResponse>>> getJobPostingsBySearchResult(
+      @PathVariable Long searchResultId) {
+    List<JobPostingResponse> jobPostings = searchService.getJobPostingsBySearchResult(searchResultId);
+    return ResponseEntity.ok(BaseResponse.success("검색 결과에 해당하는 채용공고를 조회했습니다.", jobPostings));
   }
 
   @GetMapping("/districts")
