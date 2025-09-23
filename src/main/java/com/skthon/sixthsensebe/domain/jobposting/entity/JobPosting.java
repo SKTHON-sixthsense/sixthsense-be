@@ -41,6 +41,10 @@ public class JobPosting extends BaseTimeEntity {
   @Column(name = "workLocation")
   private String workLocation; // 근무지
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "salaryType")
+  private SalaryType salaryType; // 급여 형태
+
   @Column(name = "salary")
   private String salary; // 급여
 
