@@ -2,6 +2,7 @@ package com.skthon.sixthsensebe.domain.jobposting.dto.response;
 
 import com.skthon.sixthsensebe.domain.jobposting.entity.EmploymentType;
 import com.skthon.sixthsensebe.domain.jobposting.entity.RecruitmentStatus;
+import com.skthon.sixthsensebe.domain.jobposting.entity.SalaryType;
 import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.DetailJobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.JobCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,8 +33,11 @@ public class JobPostingResponse {
   @Schema(description = "근무지")
   private String workLocation;
 
+  @Schema(description = "급여 형태")
+  private SalaryType salaryType;
+
   @Schema(description = "급여")
-  private String salary;
+  private Integer salary;
 
   @Schema(description = "근무 요일")
   private String workDays;
@@ -58,9 +62,6 @@ public class JobPostingResponse {
 
   @Schema(description = "우대 조건")
   private String preferredQualifications;
-
-  @Schema(description = "가게 홈페이지 url")
-  private String homepageUrl;
 
   @Schema(description = "가게 전화번호")
   private String callNum;
