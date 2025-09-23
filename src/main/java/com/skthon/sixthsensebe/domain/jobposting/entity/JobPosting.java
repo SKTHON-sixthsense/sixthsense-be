@@ -46,7 +46,7 @@ public class JobPosting extends BaseTimeEntity {
   private SalaryType salaryType; // 급여 형태
 
   @Column(name = "salary")
-  private String salary; // 급여
+  private Integer salary; // 급여
 
   @Column(name = "workDays")
   private String workDays; // 근무 요일
