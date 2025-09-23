@@ -5,6 +5,7 @@ import com.skthon.sixthsensebe.domain.jobposting.dto.response.JobPostingResponse
 import com.skthon.sixthsensebe.domain.jobposting.entity.EmploymentType;
 import com.skthon.sixthsensebe.domain.jobposting.entity.JobPosting;
 import com.skthon.sixthsensebe.domain.jobposting.entity.RecruitmentStatus;
+import com.skthon.sixthsensebe.domain.jobposting.entity.SalaryType;
 import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.DetailJobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.JobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.exception.JobPostingErrorCode;
@@ -36,7 +37,8 @@ public class JobPostingService {
       MultipartFile file,
       EmploymentType employmentType,
       JobCategory jobCategory,
-      List<DetailJobCategory> detailJobCategory) {
+      List<DetailJobCategory> detailJobCategory,
+      SalaryType salaryType) {
 
     log.info("=== 요청 데이터 확인 ===");
     log.info("postName: {}", request.getPostName());
@@ -56,11 +58,11 @@ public class JobPostingService {
           .workHour(request.getWorkHours())
           .jobCategory(jobCategory)
           .detailJobCategory(detailJobCategory)
+          .salaryType(salaryType)
           .employmentType(employmentType)
           .benefits(request.getBenefits())
           .educationRequirement(request.getEducationRequirement())
           .preferredQualifications(request.getPreferredQualifications())
-          .homepageUrl(request.getHomepageUrl())
           .callNum(request.getCallNum())
           .build();
 

@@ -28,6 +28,7 @@ public class JobPostingMapper {
         .status(jobPosting.getStatus())
         .workLocation(jobPosting.getWorkLocation())
         .salary(jobPosting.getSalary())
+        .salaryType(jobPosting.getSalaryType())
         .workDays(jobPosting.getWorkDays())
         .workHours(jobPosting.getWorkHour())
         .jobCategory(jobPosting.getJobCategory())
@@ -36,7 +37,6 @@ public class JobPostingMapper {
         .benefits(jobPosting.getBenefits())
         .educationRequirement(jobPosting.getEducationRequirement())
         .preferredQualifications(jobPosting.getPreferredQualifications())
-        .homepageUrl(jobPosting.getHomepageUrl())
         .callNum(jobPosting.getCallNum())
         .createDate(jobPosting.getCreatedAt() != null ?
             jobPosting.getCreatedAt().format(DATE_FORMATTER) : null)
