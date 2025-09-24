@@ -20,6 +20,7 @@ public class EduSummaryResponse {
 
   @Schema(description = "좋아요 여부", example = "true")
   private Boolean isLiked;
+  
   @Schema(description = "교육공고 사진 url", example = "...")
   private String s3url;
 
