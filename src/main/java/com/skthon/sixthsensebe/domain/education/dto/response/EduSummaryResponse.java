@@ -17,7 +17,10 @@ public class EduSummaryResponse {
 
   @Schema(description = "교육공고 설명", example = "다양한 돌봄 현장에서 활용되는 자격증")
   private String summary;
-
+  
+  @Schema(description = "교육공고 사진 url", example = "...")
+  private String s3url;
+  
   @Schema(description = "찜 여부", example = "true")
   private Boolean isFavorited;
 

@@ -54,6 +54,7 @@ public class EducationService {
     return EduSummaryResponse.builder()
         .id(education.getId())
         .title(education.getTitle())
+        .s3url(education.getS3url())
         .summary(education.getSummary())
         .isFavorited(true) // 추후 변경 필요
         .build();
