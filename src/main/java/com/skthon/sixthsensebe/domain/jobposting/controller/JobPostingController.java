@@ -3,6 +3,7 @@ package com.skthon.sixthsensebe.domain.jobposting.controller;
 import com.skthon.sixthsensebe.domain.jobposting.dto.request.CreateJobPostingRequest;
 import com.skthon.sixthsensebe.domain.jobposting.dto.response.JobPostingResponse;
 import com.skthon.sixthsensebe.domain.jobposting.entity.EmploymentType;
+import com.skthon.sixthsensebe.domain.jobposting.entity.SalaryType;
 import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.DetailJobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.JobCategory;
 import com.skthon.sixthsensebe.domain.jobposting.entity.jobcategory.detail.*;
@@ -41,9 +42,16 @@ public class JobPostingController {
       @RequestPart(value = "image") MultipartFile file,
       @Parameter(description = "고용 형태") @RequestParam("employment") EmploymentType employmentType,
       @Parameter(description = "모집 직종 대분류") @RequestParam("jobcategory") JobCategory jobCategory,
-      @Parameter(description = "모집 직종 세부분류") @RequestParam("detailjobcategory") List<DetailJobCategory> detailJobCategory) {
+      @Parameter(description = "모집 직종 세부분류") @RequestParam("detailjobcategory") List<DetailJobCategory> detailJobCategory,
+      @Parameter(description = "급여 형태") @RequestParam("salarytype") SalaryType salaryType) {
 
-    JobPostingResponse response = jobPostingService.createJobPosting(request, file, employmentType, jobCategory, detailJobCategory);
+    JobPostingResponse response = jobPostingService.createJobPosting(
+        request,
+        file,
+        employmentType,
+        jobCategory,
+        detailJobCategory,
+        salaryType);
 
     return ResponseEntity.ok(BaseResponse.success("채용공고가 성공적으로 등록되었습니다.", response));
 

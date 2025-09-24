@@ -95,10 +95,10 @@ public class UserService {
       LocalDate birthDate,
       Gender gender,
       String phone,
-      List<Personality> personality,
-      List<Health> health
+      List<Personality> personalityList,
+      List<Health> healthList
   ) {
-    return applyDetailUpdate(userId, name, birthDate, gender, phone, personality, health);
+    return applyDetailUpdate(userId, name, birthDate, gender, phone, personalityList, healthList);
   }
 
   // 공통 적용 로직

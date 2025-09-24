@@ -33,6 +33,7 @@ services:
       - mysql-data:/var/lib/mysql
       # MySQL의 데이터 파일을 호스트에 볼륨으로 영구 저장
       # 컨테이너가 삭제돼도 DB 내용은 유지됨
+      - ./mysql/conf.d:/etc/mysql/conf.d
     networks:
       - sixthsense-network  # Spring과 같은 네트워크 상에 있어서 mysql이라는 호스트 이름으로 접근 가능
 

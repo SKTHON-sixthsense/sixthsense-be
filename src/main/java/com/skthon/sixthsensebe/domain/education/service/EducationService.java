@@ -40,35 +40,36 @@ public class EducationService {
     return toEduResponse(education);
   }
 
-  // EducationService에 추가
   @Transactional
   public void updateEducationImage(Long id, String s3url) {
     Education education = educationRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("교육 정보를 찾을 수 없습니다."));
 
-    education.setS3url(s3url);  // Entity에 업데이트 메서드 필요
+    education.setS3url(s3url);
     educationRepository.save(education);
   }
 
 
   public EduSummaryResponse toEduSummaryResponse(Education education) {
     return EduSummaryResponse.builder()
+        .id(education.getId())
         .title(education.getTitle())
         .s3url(education.getS3url())
         .summary(education.getSummary())
-        .isLiked(false) // 추후 변경 필요
+        .isFavorited(true) // 추후 변경 필요
         .build();
   }
 
   public EduResponse toEduResponse(Education education) {
     return EduResponse.builder()
+        .id(education.getId())
         .title(education.getTitle())
         .description(education.getDescription())
         .requirement(education.getRequirement())
         .s3url(education.getS3url())
         .competentAuthority(education.getCompetentAuthority())
         .issuingAuthority(education.getIssuingAuthority())
-        .isLiked(false) // 추후 변경 필요
+        .isLiked(true) // 추후 변경 필요
         .build();
   }
 }
