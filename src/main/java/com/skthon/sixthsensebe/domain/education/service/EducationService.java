@@ -54,6 +54,7 @@ public class EducationService {
   public EduSummaryResponse toEduSummaryResponse(Education education) {
     return EduSummaryResponse.builder()
         .title(education.getTitle())
+        .s3url(education.getS3url())
         .summary(education.getSummary())
         .isLiked(false) // 추후 변경 필요
         .build();
