@@ -16,22 +16,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -71,7 +66,7 @@ public class UserController {
     return ResponseEntity.ok(BaseResponse.success("내 정보 조회에 성공했습니다.", data));
   }
 
-  @PutMapping("/detail")
+  @PutMapping(value = "/detail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(
       summary = "내 마이페이지 수정",
       description = "기본 정보는 문자열 입력, 성격/건강은 Enum 선택으로 받습니다."
@@ -96,7 +91,10 @@ public class UserController {
       @RequestParam(required = false) List<Personality> personality,
 
       @Parameter(description = "건강 태그(멀티)")
-      @RequestParam(required = false) List<Health> health
+      @RequestParam(required = false) List<Health> health,
+
+      @Parameter(description = "프로필 이미지 파일")
+      @RequestParam(required = false) MultipartFile file
   ) {
     UserResponse data = userService.replaceUserDetailParams(
         currentUserId(request),
@@ -105,7 +103,8 @@ public class UserController {
         gender,
         phone,
         personality,
-        health
+        health,
+        file
     );
 
     String message = Boolean.TRUE.equals(data.getFirstTime())
@@ -113,6 +112,28 @@ public class UserController {
         : "내 정보 수정 성공";
 
     return ResponseEntity.ok(BaseResponse.success(message, data));
+  }
+
+  // 프로필 사진 업로드
+  @Operation(summary = "프로필 사진 업로드", description = "마이페이지 프로필 사진을 업로드(기존에 업로드 되어있으면 교체됨)")
+  @PostMapping(value = "/{userId}/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<BaseResponse<UserResponse>> uploadProfileImage(
+      @PathVariable Long userId,
+      @Parameter(description = "프로필 이미지 파일")
+      @RequestParam("file") MultipartFile file
+  ) {
+    UserResponse data = userService.uploadProfileImage(userId, file);
+    return ResponseEntity.ok(BaseResponse.success("프로필 사진 업로드에 성공했습니다.", data));
+  }
+
+  // 프로필 사진 삭제
+  @Operation(summary = "프로필 사진 삭제", description = "마이페이지 프로필 사진을 삭제")
+  @DeleteMapping("/{userId}/profile-image")
+  public ResponseEntity<BaseResponse<UserResponse>> deleteProfileImage(
+      @PathVariable Long userId
+  ) {
+    UserResponse data = userService.deleteProfileImage(userId);
+    return ResponseEntity.ok(BaseResponse.success("프로필 사진이 삭제되었습니다.", data));
   }
 
   // 특정 유저 상세 조회

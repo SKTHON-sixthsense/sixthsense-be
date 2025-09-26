@@ -127,7 +127,7 @@ public class S3Service {
     try {
       amazonS3.deleteObject(new DeleteObjectRequest(s3Config.getBucket(), keyName));
     } catch (Exception e) {
-      log.error("S3 upload 중 오류 발생", e);
+      log.error("S3 삭제 중 오류 발생", e);
       throw new CustomException(S3ErrorCode.FILE_SERVER_ERROR);
     }
   }

@@ -4,10 +4,11 @@ import com.skthon.sixthsensebe.domain.user.entity.Gender;
 import com.skthon.sixthsensebe.domain.user.entity.Role;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDate;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Builder
@@ -22,6 +23,9 @@ public class UserResponse {
 
   @Schema(description = "이름", example = "박명수")
   private String name;
+
+  @Schema(description = "프로필사진 url", example = "...")
+  private String s3url;
 
   @Schema(description = "사용자 역할", example = "WORKER", allowableValues = {"OWNER", "WORKER"})
   private Role role;
