@@ -1,13 +1,29 @@
 package com.skthon.sixthsensebe.domain.user.entity;
 
+import com.skthon.sixthsensebe.domain.career.entity.Career;
 import com.skthon.sixthsensebe.domain.introduction.entity.Introduction;
 import com.skthon.sixthsensebe.domain.jobapplication.entity.JobApplication;
 import com.skthon.sixthsensebe.global.common.BaseTimeEntity;
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -33,7 +49,29 @@ public class User extends BaseTimeEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private Role role;
+  private Role role;  // OWNER / WORKER
+
+  @Column(name = "birth_date")
+  private LocalDate birthDate;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "gender", length = 10)
+  private Gender gender;
+
+  @Column(name = "phone", length = 20, unique = true)
+  private String phone;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "personality")
+  private List<Personality> personalityList = new ArrayList<>();
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "health")
+  private List<Health> healthList = new ArrayList<>();
+
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Career> experiences = new ArrayList<>();
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private Introduction introduction;

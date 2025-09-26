@@ -39,6 +39,9 @@ public class S3Config {
   @Value("${cloud.aws.s3.path.profile}")
   private String profile;
 
+  @Value("${cloud.aws.s3.path.education}")
+  private String education;
+
   @PostConstruct
   public void init() {
     this.awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
