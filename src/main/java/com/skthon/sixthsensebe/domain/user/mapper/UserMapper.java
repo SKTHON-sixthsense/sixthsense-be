@@ -7,12 +7,13 @@ import com.skthon.sixthsensebe.domain.user.entity.Health;
 import com.skthon.sixthsensebe.domain.user.entity.Personality;
 import com.skthon.sixthsensebe.domain.user.entity.Role;
 import com.skthon.sixthsensebe.domain.user.entity.User;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
@@ -22,6 +23,7 @@ public class UserMapper {
         .username(req.getUsername() != null ? req.getUsername().trim().toLowerCase() : null)
         .password(encodedPassword)
         .name(req.getName())
+        .s3url(null) // 초기에는 프로필 사진 null
         // role이 null이면 기본값 WORKER로 보정
         .role(req.getRole() != null ? req.getRole() : Role.WORKER)
         .build();
@@ -36,6 +38,7 @@ public class UserMapper {
         .id(user.getId())
         .username(user.getUsername())
         .name(user.getName())
+        .s3url(user.getS3url())
         .role(user.getRole())
         .birthDate(user.getBirthDate())
         .age(calcAge(user.getBirthDate()))

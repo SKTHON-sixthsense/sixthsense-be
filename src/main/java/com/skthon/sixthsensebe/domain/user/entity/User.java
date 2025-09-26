@@ -4,26 +4,12 @@ import com.skthon.sixthsensebe.domain.career.entity.Career;
 import com.skthon.sixthsensebe.domain.introduction.entity.Introduction;
 import com.skthon.sixthsensebe.domain.jobapplication.entity.JobApplication;
 import com.skthon.sixthsensebe.global.common.BaseTimeEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
@@ -46,6 +32,10 @@ public class User extends BaseTimeEntity {
 
   @Column(name = "password", nullable = false, length = 100)
   private String password;
+
+  @Lob
+  @Column(name = "s3url")
+  private String s3url;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)

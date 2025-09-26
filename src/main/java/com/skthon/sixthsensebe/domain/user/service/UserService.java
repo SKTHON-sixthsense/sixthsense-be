@@ -3,23 +3,23 @@ package com.skthon.sixthsensebe.domain.user.service;
 import com.skthon.sixthsensebe.domain.user.dto.request.UserDetailUpdateRequest;
 import com.skthon.sixthsensebe.domain.user.dto.request.UserRequest;
 import com.skthon.sixthsensebe.domain.user.dto.response.UserResponse;
-import com.skthon.sixthsensebe.domain.user.entity.Gender;
-import com.skthon.sixthsensebe.domain.user.entity.Health;
-import com.skthon.sixthsensebe.domain.user.entity.Personality;
-import com.skthon.sixthsensebe.domain.user.entity.Role;
-import com.skthon.sixthsensebe.domain.user.entity.User;
+import com.skthon.sixthsensebe.domain.user.entity.*;
 import com.skthon.sixthsensebe.domain.user.exception.UserErrorCode;
 import com.skthon.sixthsensebe.domain.user.mapper.UserMapper;
 import com.skthon.sixthsensebe.domain.user.repository.UserRepository;
 import com.skthon.sixthsensebe.global.exception.CustomException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
+import com.skthon.sixthsensebe.global.s3.PathName;
+import com.skthon.sixthsensebe.global.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -28,6 +28,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper; // toEntity(), toResponse() 제공
   private final PasswordEncoder passwordEncoder; // BCryptPasswordEncoder 등
+  private final S3Service s3Service;
 
   /* 회원가입 */
   @Transactional
@@ -83,7 +84,8 @@ public class UserService {
         req.getGender(),
         req.getPhone(),
         req.getPersonality(),
-        req.getHealth()
+        req.getHealth(),
+        null
     );
   }
 
@@ -96,10 +98,12 @@ public class UserService {
       Gender gender,
       String phone,
       List<Personality> personalityList,
-      List<Health> healthList
+      List<Health> healthList,
+      MultipartFile file
   ) {
-    return applyDetailUpdate(userId, name, birthDate, gender, phone, personalityList, healthList);
+    return applyDetailUpdate(userId, name, birthDate, gender, phone, personalityList, healthList, file);
   }
+
 
   // 공통 적용 로직
   private UserResponse applyDetailUpdate(
@@ -109,7 +113,8 @@ public class UserService {
       Gender gender,
       String phone,
       List<Personality> personality,
-      List<Health> health
+      List<Health> health,
+      MultipartFile file
   ) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
@@ -121,10 +126,23 @@ public class UserService {
             (user.getPersonalityList() == null || user.getPersonalityList().isEmpty()) &&
             (user.getHealthList() == null || user.getHealthList().isEmpty());
 
+
+    if (file != null && !file.isEmpty()) {
+      // 기존 프로필 사진 삭제
+      if (user.getS3url() != null && !user.getS3url().isEmpty()) {
+        deleteProfileImage(user.getS3url());
+      }
+
+      // 새 이미지 업로드
+      String s3Url = s3Service.uploadFile(PathName.PROFILE, file);
+      user.setS3url(s3Url);
+    }
+
     user.setName(name);
     user.setBirthDate(birthDate);
     user.setGender(gender);
     user.setPhone(phone);
+    user.setS3url(user.getS3url());
 
 // personality
     if (user.getPersonalityList() == null) {
@@ -168,6 +186,68 @@ public class UserService {
             (user.getHealthList() == null || user.getHealthList().isEmpty());
 
     return userMapper.toResponse(user, isFirstTime);
+  }
+
+  // 프로필 사진 업로드
+  @Transactional
+  public UserResponse uploadProfileImage(Long userId, MultipartFile file) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+
+    // 기존 프로필 사진 삭제
+    if (user.getS3url() != null && !user.getS3url().isEmpty()) {
+      deleteProfileImage(user.getS3url());
+    }
+
+    // 새 이미지 업로드
+    String s3Url = s3Service.uploadFile(PathName.PROFILE, file);
+    user.setS3url(s3Url);
+
+    userRepository.save(user);
+
+    boolean isFirstTime =
+        user.getBirthDate() == null &&
+            user.getGender() == null &&
+            user.getPhone() == null &&
+            (user.getPersonalityList() == null || user.getPersonalityList().isEmpty()) &&
+            (user.getHealthList() == null || user.getHealthList().isEmpty());
+
+    return userMapper.toResponse(user, isFirstTime);
+  }
+
+  // 프로필 사진 삭제
+  @Transactional
+  public UserResponse deleteProfileImage(Long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+
+    if (user.getS3url() != null && !user.getS3url().isEmpty()) {
+      deleteProfileImage(user.getS3url());
+      user.setS3url(null);
+      userRepository.save(user);
+    }
+
+    boolean isFirstTime =
+        user.getBirthDate() == null &&
+            user.getGender() == null &&
+            user.getPhone() == null &&
+            (user.getPersonalityList() == null || user.getPersonalityList().isEmpty()) &&
+            (user.getHealthList() == null || user.getHealthList().isEmpty());
+
+    return userMapper.toResponse(user, isFirstTime);
+  }
+
+  // S3에서 파일 삭제
+  private void deleteProfileImage(String s3Url) {
+    try {
+      // S3 URL에서 key 추출
+      String key = s3Url.substring(s3Url.lastIndexOf("/") + 1);
+      String fullKey = "profile/" + key;
+      s3Service.deleteFile(fullKey);
+    } catch (Exception e) {
+      // 삭제 실패해도 진행 (파일이 이미 없을 수 있음)
+      System.err.println("프로필 이미지 삭제 실패: " + e.getMessage());
+    }
   }
 
   private String normalizeUsername(String username) {
