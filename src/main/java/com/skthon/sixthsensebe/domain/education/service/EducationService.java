@@ -54,7 +54,6 @@ public class EducationService {
     return EduSummaryResponse.builder()
         .id(education.getId())
         .title(education.getTitle())
-        .s3url(education.getS3url())
         .summary(education.getSummary())
         .isFavorited(true) // 추후 변경 필요
         .build();
@@ -67,6 +66,7 @@ public class EducationService {
         .description(education.getDescription())
         .requirement(education.getRequirement())
         .s3url(education.getS3url())
+        .homepageUrl(education.getHomepageUrl())
         .competentAuthority(education.getCompetentAuthority())
         .issuingAuthority(education.getIssuingAuthority())
         .isLiked(true) // 추후 변경 필요

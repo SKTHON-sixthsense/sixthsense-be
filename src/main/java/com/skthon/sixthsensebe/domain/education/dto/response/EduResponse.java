@@ -21,6 +21,9 @@ public class EduResponse {
   @Schema(description = "교육공고 관련 이미지 url", example = "...")
   private String s3url;
 
+  @Schema(description = "홈페이지 url", example = "...")
+  private String homepageUrl;
+
   @Schema(description = "자격요건", example = "16세 이상 누구나")
   private String requirement;
 
