@@ -24,7 +24,7 @@ public class CreateJobPostingRequest {
   private String workLocation;
 
   @Schema(description = "급여", example = "12000")
-  private Integer salary;
+  private String salary;
 
   @Schema(description = "근무 요일", example = "월화수")
   private String workDays;
