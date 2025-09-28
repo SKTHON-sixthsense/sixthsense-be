@@ -37,7 +37,7 @@ public class JobPostingResponse {
   private SalaryType salaryType;
 
   @Schema(description = "급여")
-  private Integer salary;
+  private String salary;
 
   @Schema(description = "근무 요일")
   private String workDays;
