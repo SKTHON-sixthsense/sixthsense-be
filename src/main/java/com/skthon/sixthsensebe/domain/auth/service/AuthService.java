@@ -34,6 +34,10 @@ public class AuthService {
   private final RedisUtil redisUtil;
   private final UserMapper userMapper;
   private final UserService userService;
+
+  private static final String ACCESS_TOKEN_COOKIE = "accessToken";
+  private static final String REFRESH_TOKEN_COOKIE = "refreshToken";
+  private static final String REDIS_BLACKLIST_PREFIX = "blacklist:";
   private static final String REFRESH_TOKEN_PREFIX = "user:refresh:";
 
   @Value("${cookie.secure}")
@@ -71,61 +75,81 @@ public class AuthService {
   /**
    * 로그아웃 처리 메서드
    *
-   * <p>요청 헤더에서 액세스 토큰을 추출하여 Redis 블랙리스트에 저장하고, 리프레시 토큰을 Redis에서 삭제하여 재사용을 차단합니다.
+   * <p>쿠키에 저장된 액세스 토큰을 검증하여 Redis 블랙리스트에 등록하고,
+   * 사용자 리프레시 토큰을 Redis에서 삭제한 뒤 브라우저의 액세스/리프레시 쿠키를 즉시 만료시킨다.
    *
-   * @param request  HTTP 요청 객체 (헤더에서 Access Token 추출용)
-   * @param response HTTP 응답 객체 (리프레시 쿠키 삭제용)
-   * @throws CustomException 액세스 토큰이 유효하지 않거나 없을 경우 {@link AuthErrorCode#INVALID_ACCESS_TOKEN}
+   * <ul>
+   *   <li>Access Token: 쿠키에서 추출 → 유효성 검증 → 블랙리스트 등록(만료 시각까지)</li>
+   *   <li>Refresh Token: Redis 저장값 삭제 → 브라우저 쿠키 삭제</li>
+   *   <li>쿠키 정리: accessToken / refreshToken 둘 다 Max-Age=0 으로 무효화</li>
+   * </ul>
+   *
+   * @param response HTTP 응답 객체 (accessToken/refreshToken 쿠키 만료 설정용)
+   * @throws CustomException 액세스 토큰이 없거나 유효하지 않은 경우 {@link AuthErrorCode#INVALID_ACCESS_TOKEN}
    */
+  private void deleteAccessTokenCookie(HttpServletResponse response) {
+    ResponseCookie.ResponseCookieBuilder cookie =
+        ResponseCookie.from("accessToken", "")
+            .httpOnly(true)
+            .path("/")
+            .maxAge(Duration.ZERO);
+
+    if (secure) {
+      cookie.secure(true).sameSite("None");
+    } else {
+      cookie.secure(false).sameSite("Lax");
+    }
+
+    response.addHeader(HttpHeaders.SET_COOKIE, cookie.build().toString());
+  }
+
   public void logout(HttpServletRequest request, HttpServletResponse response) {
-    String accessToken = resolveAccessToken(request);
+    String accessToken = extractCookie(request, ACCESS_TOKEN_COOKIE); // 상수 사용
     if (accessToken == null || !jwtProvider.validateToken(accessToken)) {
       throw new CustomException(AuthErrorCode.INVALID_ACCESS_TOKEN);
     }
 
-    // 블랙리스트 등록 (accessToken → "logout" 값, 만료시간까지)
     long expiration =
         jwtProvider.extractExpiration(accessToken).getTime() - System.currentTimeMillis();
-    redisUtil.setData("blacklist:" + accessToken, "logout", expiration / 1000);
+    redisUtil.setData(REDIS_BLACKLIST_PREFIX + accessToken, "logout", expiration / 1000);
 
-    // refresh 토큰 Redis에서 삭제
     Long userId = jwtProvider.extractUserId(accessToken);
-    redisUtil.deleteData("user:refresh:" + userId);
+    redisUtil.deleteData(REFRESH_TOKEN_PREFIX + userId);
 
-    // 쿠키에서 refreshToken 제거
     deleteRefreshTokenCookie(response);
+    deleteAccessTokenCookie(response);
+  }
+
+  private String extractCookie(HttpServletRequest request, String name) {
+    if (request.getCookies() == null) {
+      return null;
+    }
+    for (Cookie cookie : request.getCookies()) {
+      if (name.equals(cookie.getName())) {
+        return cookie.getValue();
+      }
+    }
+    return null;
   }
 
   /**
-   * 액세스 토큰 재발급 처리 메서드
-   *
-   * <p>쿠키에서 리프레시 토큰을 추출한 후 Redis에 저장된 토큰과 비교하여 유효성을 검증합니다. 검증에 성공하면 새로운 액세스 토큰을 생성하여 응답 헤더에
-   * 포함시킵니다.
-   *
-   * @param request  HTTP 요청 객체 (쿠키에서 리프레시 토큰 추출용)
-   * @param response HTTP 응답 객체 (새로운 액세스 토큰 설정용)
-   * @throws CustomException 리프레시 토큰이 없거나 유효하지 않거나, 저장된 토큰과 일치하지 않는 경우
-   *                         {@link AuthErrorCode#REFRESH_TOKEN_REQUIRED}
+   * 액세스 토큰 재발급 - 쿠키의 refreshToken 검증 → 새 accessToken 발급
    */
   public void reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
-    // 1. 쿠키에서 refreshToken 추출
     String refreshToken = extractRefreshTokenFromCookie(request);
     if (refreshToken == null || !jwtProvider.validateToken(refreshToken)) {
       throw new CustomException(AuthErrorCode.REFRESH_TOKEN_REQUIRED);
     }
 
-    // 2. 사용자 ID 추출
     Long userId = jwtProvider.extractUserId(refreshToken);
-
-    // 3. Redis에 저장된 리프레시 토큰과 비교
-    String storedToken = redisUtil.getData("user:refresh:" + userId);
+    String storedToken = redisUtil.getData(REFRESH_TOKEN_PREFIX + userId);
     if (!refreshToken.equals(storedToken)) {
       throw new CustomException(AuthErrorCode.REFRESH_TOKEN_REQUIRED);
     }
 
-    // 4. 새로운 accessToken 생성 후 응답 헤더에 설정
+    // 새 accessToken을 쿠키로 내려줌 (헤더 X)
     String newAccessToken = jwtProvider.createAccessToken(userId);
-    response.setHeader("Authorization", "Bearer " + newAccessToken);
+    setAccessTokenCookie(response, newAccessToken, jwtProvider.getAccessTokenExpireTime() / 1000);
   }
 
   // 사용자 인증
@@ -149,22 +173,33 @@ public class AuthService {
     long refreshTokenExpireSeconds = jwtProvider.getRefreshTokenExpireTime() / 1000;
     redisUtil.setData(REFRESH_TOKEN_PREFIX + user.getId(), refreshToken, refreshTokenExpireSeconds);
 
-    setAccessTokenHeader(response, accessToken);
+    setAccessTokenCookie(response, accessToken, jwtProvider.getAccessTokenExpireTime() / 1000);
     setRefreshTokenCookie(response, refreshToken, refreshTokenExpireSeconds);
 
     return userMapper.toResponse(user);
   }
 
-  private void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
-    response.setHeader("Authorization", "Bearer " + accessToken);
+  private void setAccessTokenCookie(HttpServletResponse response, String accessToken,
+      long maxAgeSec) {
+    ResponseCookie.ResponseCookieBuilder cookie =
+        ResponseCookie.from(ACCESS_TOKEN_COOKIE, accessToken)
+            .httpOnly(true)       // XSS에 안전
+            .path("/")
+            .maxAge(Duration.ofSeconds(maxAgeSec));
+
+    if (secure) {
+      cookie.secure(true).sameSite("None"); // 크로스 도메인일 때
+    } else {
+      cookie.secure(false).sameSite("Lax"); // 로컬 개발
+    }
+    response.addHeader(HttpHeaders.SET_COOKIE, cookie.build().toString());
   }
 
   // 토큰 쿠키 설정
-  private void setRefreshTokenCookie(
-      HttpServletResponse response, String refreshToken, long maxAgeSec) {
-
+  private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken,
+      long maxAgeSec) {
     ResponseCookie.ResponseCookieBuilder cookie =
-        ResponseCookie.from("refreshToken", refreshToken)
+        ResponseCookie.from(REFRESH_TOKEN_COOKIE, refreshToken)
             .httpOnly(true)
             .path("/")
             .maxAge(Duration.ofSeconds(maxAgeSec));
@@ -172,7 +207,6 @@ public class AuthService {
     if (secure) {
       cookie.secure(true).sameSite("None");
     } else {
-      // 로컬 개발환경
       cookie.secure(false).sameSite("Lax");
     }
 
@@ -200,9 +234,13 @@ public class AuthService {
     return null;
   }
 
+
   private void deleteRefreshTokenCookie(HttpServletResponse response) {
     ResponseCookie.ResponseCookieBuilder cookie =
-        ResponseCookie.from("refreshToken", "").httpOnly(true).path("/").maxAge(Duration.ZERO);
+        ResponseCookie.from(REFRESH_TOKEN_COOKIE, "")
+            .httpOnly(true)
+            .path("/")
+            .maxAge(Duration.ZERO);
 
     if (secure) {
       cookie.secure(true).sameSite("None");

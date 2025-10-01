@@ -26,13 +26,12 @@ public class AuthController {
 
   @Operation(
       summary = "로그인",
-      description =
+      description = """
+            아이디/비밀번호로 로그인합니다.
+            - 성공 시: accessToken/refreshToken 모두 **HttpOnly 쿠키**로 전달됩니다.
+            - 응답 바디에는 로그인한 사용자 정보가 포함됩니다.
           """
-              아이디와 비밀번호로 로그인을 수행합니다.
-              
-              - 성공 시: 액세스 토큰은 헤더(**Authorization**)로, 리프레시 토큰은 **HttpOnly 쿠키**로 전달됩니다.
-              - 응답 바디에는 로그인한 사용자의 기본 정보가 포함됩니다.
-              """)
+  )
   @PostMapping("/login")
   public ResponseEntity<BaseResponse<UserResponse>> login(
       @Valid @RequestBody UserRequest.LoginRequest loginRequest, HttpServletResponse response) {
@@ -66,14 +65,11 @@ public class AuthController {
 
   @Operation(
       summary = "액세스 토큰 재발급",
-      description =
+      description = """
+            쿠키의 refreshToken을 검증하여 **새로운 accessToken을 HttpOnly 쿠키**로 재발급합니다.
+            - Redis 저장 토큰과 일치할 때만 성공합니다.
           """
-              저장된 리프레시 토큰을 기반으로 새로운 액세스 토큰을 재발급합니다.
-              - 요청 시 **쿠키에 저장된 refreshToken**을 사용합니다.
-              - Redis에 저장된 토큰과 일치하는 경우에만 재발급이 성공합니다.
-              - 응답 헤더의 Authorization 값으로 새로운 액세스 토큰이 전달됩니다.
-              - 본 API는 **로그인 후 액세스 토큰이 만료된 경우에 사용**합니다.
-              """)
+  )
   @PostMapping("/refresh")
   public ResponseEntity<BaseResponse<String>> reissueAccessToken(
       HttpServletRequest request, HttpServletResponse response) {
@@ -84,15 +80,11 @@ public class AuthController {
 
   @Operation(
       summary = "로그아웃",
-      description =
+      description = """
+            쿠키의 accessToken을 블랙리스트에 등록하고, Redis의 refreshToken을 삭제합니다.
+            - 브라우저의 accessToken/refreshToken 쿠키를 즉시 만료시킵니다.
           """
-              현재 로그인된 사용자를 로그아웃 처리합니다.
-              
-              - 요청 헤더의 **Authorization**에서 액세스 토큰을 추출하여 로그아웃 처리합니다.
-              - 액세스 토큰은 Redis 블랙리스트에 등록되어 만료 전까지 사용이 차단됩니다.
-              - 리프레시 토큰은 Redis에서 삭제되며, **브라우저 쿠키에서도 제거**됩니다.
-              - 응답 바디는 별도의 데이터 없이 로그아웃 성공 메시지만 반환됩니다.
-              """)
+  )
   @PostMapping("/logout")
   public ResponseEntity<BaseResponse<Void>> logout(
       HttpServletRequest request, HttpServletResponse response) {
