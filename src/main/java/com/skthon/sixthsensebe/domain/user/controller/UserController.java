@@ -16,17 +16,24 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,13 +43,26 @@ public class UserController {
 
   private final UserService userService;
   private final JwtProvider jwtProvider;
+  private static final String ACCESS_TOKEN_COOKIE = "accessToken";
 
   private Long currentUserId(HttpServletRequest request) {
-    String bearer = request.getHeader("Authorization");
-    if (bearer != null && bearer.startsWith("Bearer ")) {
-      return jwtProvider.extractUserId(bearer.substring(7));
+    String token = extractCookie(request, ACCESS_TOKEN_COOKIE);
+    if (token != null) {
+      return jwtProvider.extractUserId(token);
     }
     throw new CustomException(UserErrorCode.USER_NOT_FOUND);
+  }
+
+  private String extractCookie(HttpServletRequest request, String name) {
+    if (request.getCookies() == null) {
+      return null;
+    }
+    for (var c : request.getCookies()) {
+      if (name.equals(c.getName())) {
+        return c.getValue();
+      }
+    }
+    return null;
   }
 
   // 회원가입
