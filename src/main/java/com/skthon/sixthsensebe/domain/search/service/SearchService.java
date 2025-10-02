@@ -10,9 +10,6 @@ import com.skthon.sixthsensebe.domain.search.entity.Seoul;
 import com.skthon.sixthsensebe.domain.search.repository.SearchResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -57,13 +54,18 @@ public class SearchService {
   private boolean applyFilters(JobPosting jobPosting, SearchRequest request) {
     // 1. 서울시 구 필터 (workLocation에서 구 이름이 포함되어 있으면 매칭)
     if (request.getDistrict() != null) {
-      boolean districtMatch = jobPosting.getWorkLocation() != null &&
-                             jobPosting.getWorkLocation().contains(request.getDistrict().getValue());
+      // "서울 전체" 선택 시 모든 지역 허용
+      if (request.getDistrict() == Seoul.ALL) {
+        log.debug("서울 전체 필터 - 모든 지역 허용");
+      } else {
+        boolean districtMatch = jobPosting.getWorkLocation() != null &&
+            jobPosting.getWorkLocation().contains(request.getDistrict().getValue());
 
-      log.debug("구 필터 체크 - 채용공고 근무지: {}, 요청 구: {}, 매칭: {}",
-                jobPosting.getWorkLocation(), request.getDistrict(), districtMatch);
+        log.debug("구 필터 체크 - 채용공고 근무지: {}, 요청 구: {}, 매칭: {}",
+            jobPosting.getWorkLocation(), request.getDistrict(), districtMatch);
 
-      if (!districtMatch) return false;
+        if (!districtMatch) return false;
+      }
     }
 
     // 2. 직종 대분류 필터 (JobCategory enum 직접 비교)
@@ -71,7 +73,7 @@ public class SearchService {
       boolean categoryMatch = request.getJobCategories().contains(jobPosting.getJobCategory());
 
       log.debug("대분류 필터 체크 - 채용공고 대분류: {}, 요청 대분류: {}, 매칭: {}",
-                jobPosting.getJobCategory(), request.getJobCategories(), categoryMatch);
+          jobPosting.getJobCategory(), request.getJobCategories(), categoryMatch);
 
       if (!categoryMatch) return false;
     }
@@ -86,7 +88,7 @@ public class SearchService {
           .anyMatch(requestDetail -> jobPosting.getDetailJobCategory().contains(requestDetail));
 
       log.debug("세부분류 필터 체크 - 채용공고 세부분류: {}, 요청 세부분류: {}, 매칭: {}",
-                jobPosting.getDetailJobCategory(), request.getDetailJobCategories(), detailCategoryMatch);
+          jobPosting.getDetailJobCategory(), request.getDetailJobCategories(), detailCategoryMatch);
 
       if (!detailCategoryMatch) return false;
     }
@@ -134,13 +136,17 @@ public class SearchService {
     log.info("=== 저장된 검색 결과 조회 ===");
     List<SearchResult> searchResults = searchResultRepository.findAllByOrderByCreatedAtDesc();
 
-    // 모든 검색 결과의 채용공고 ID를 합쳐서 중복 제거
-    List<Long> allJobPostingIds = searchResults.stream()
-        .flatMap(result -> result.getJobPostingIds().stream())
-        .distinct()
-        .collect(Collectors.toList());
+    if (searchResults.isEmpty()) {
+      log.info("저장된 검색 결과가 없습니다.");
+      return List.of();
+    }
 
-    log.info("저장된 검색 결과에서 총 {}개의 고유 채용공고 발견", allJobPostingIds.size());
+    SearchResult latestSearchResult = searchResults.get(0);
+
+    // 가장 최근 검색 결과의 채용공고 ID 사용
+    List<Long> allJobPostingIds = latestSearchResult.getJobPostingIds();
+
+    log.info("가장 최근 검색 결과에서 총 {}개의 채용공고 발견", allJobPostingIds.size());
 
     // JobPosting 조회 및 DTO 변환
     List<JobPosting> jobPostings = allJobPostingIds.stream()
