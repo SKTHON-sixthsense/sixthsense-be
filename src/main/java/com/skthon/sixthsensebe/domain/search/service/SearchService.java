@@ -54,13 +54,18 @@ public class SearchService {
   private boolean applyFilters(JobPosting jobPosting, SearchRequest request) {
     // 1. 서울시 구 필터 (workLocation에서 구 이름이 포함되어 있으면 매칭)
     if (request.getDistrict() != null) {
-      boolean districtMatch = jobPosting.getWorkLocation() != null &&
-          jobPosting.getWorkLocation().contains(request.getDistrict().getValue());
+      // "서울 전체" 선택 시 모든 지역 허용
+      if (request.getDistrict() == Seoul.ALL) {
+        log.debug("서울 전체 필터 - 모든 지역 허용");
+      } else {
+        boolean districtMatch = jobPosting.getWorkLocation() != null &&
+            jobPosting.getWorkLocation().contains(request.getDistrict().getValue());
 
-      log.debug("구 필터 체크 - 채용공고 근무지: {}, 요청 구: {}, 매칭: {}",
-          jobPosting.getWorkLocation(), request.getDistrict(), districtMatch);
+        log.debug("구 필터 체크 - 채용공고 근무지: {}, 요청 구: {}, 매칭: {}",
+            jobPosting.getWorkLocation(), request.getDistrict(), districtMatch);
 
-      if (!districtMatch) return false;
+        if (!districtMatch) return false;
+      }
     }
 
     // 2. 직종 대분류 필터 (JobCategory enum 직접 비교)
