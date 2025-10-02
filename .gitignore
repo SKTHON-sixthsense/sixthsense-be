@@ -38,3 +38,5 @@ src/main/resources/*.yml
 
 ### VS Code ###
 .vscode/
+
+.DS_Store
