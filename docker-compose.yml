@@ -24,6 +24,8 @@ services:
       - MYSQL_USER=sixthsense
       - MYSQL_PASSWORD=sixthsense06
       - MYSQL_ROOT_PASSWORD=1234  # 루트 계정의 비밀번호
+      - TZ=Asia/Seoul
+      - LANG=C.UTF-8
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
